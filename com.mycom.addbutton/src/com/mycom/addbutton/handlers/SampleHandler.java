@@ -38,7 +38,7 @@ public class SampleHandler extends AbstractHandler {
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-           MainWindowSwt.main(null);
+         MainWindowSwt.main(null);
 
 
 

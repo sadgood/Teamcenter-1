@@ -1,9 +1,13 @@
 package com.mycom.addbutton.handlers;
 
+import javax.swing.JOptionPane;
+
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -22,6 +26,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.CLabel;
+
+import com.teamcenter.rac.aif.AIFDesktop;
+import com.teamcenter.rac.kernel.TCException;
+import com.teamcenter.rac.kernel.TCSession;
 
 public class MainWindowSwt extends Shell {
 	private Text textFieldComposite1;
@@ -53,6 +61,7 @@ public class MainWindowSwt extends Shell {
 	 */
 	public MainWindowSwt(Display display) {
 		super(display, SWT.CLOSE | SWT.MIN | SWT.MAX | SWT.TITLE);
+		final TCSession tcSession = (TCSession )AIFDesktop.getActiveDesktop().getCurrentApplication().getSession();
 		setSize(828, 499);
 		setLayout(new FormLayout());
 
@@ -73,10 +82,17 @@ public class MainWindowSwt extends Shell {
 		ButtonComposite.setLayoutData(fd_ButtonComposite);
 
 		Button okButton = new Button(ButtonComposite, SWT.NONE);
+
 		okButton.setBounds(10, 10, 186, 100);
 		okButton.setText("\u041E\u041A");
 
 		Button cancelButton = new Button(ButtonComposite, SWT.NONE);
+		cancelButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				dispose();
+			}
+		});
 		cancelButton.setBounds(10, 116, 186, 45);
 		cancelButton.setText("\u041E\u0442\u043C\u0435\u043D\u0430");
 
@@ -209,7 +225,59 @@ public class MainWindowSwt extends Shell {
 
 			});
 
+		okButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (rb7.getSelection() != true) {
 
+					 try {
+							FileManager.createDirDoc(tcSession ,textFieldComposite1.getText(), "Служебная записка");
+
+							MessageBox messageBox = new MessageBox(getShell(),SWT.ICON_INFORMATION |
+									SWT.OK);
+							messageBox.setText("Успешное создания директивного документа");
+							messageBox.setMessage("Служебная записка № " + textFieldComposite1.getText() + " успешно создана");
+							messageBox.open();
+							dispose();
+
+							dispose();
+						} catch (TCException e2) {
+							MessageBox messageBox = new MessageBox(getShell(),SWT.ERROR |
+									SWT.OK);
+							messageBox.setText("Ошибка создания директивного документа");
+							messageBox.setMessage(e2.toString());
+							messageBox.open();
+
+						}
+
+				}
+				if (rb1.getSelection() != true) {
+
+					 try {
+							FileManager.createDirDoc(tcSession ,textFieldComposite1.getText(), "Служебная записка СТОП");
+
+							MessageBox messageBox = new MessageBox(getShell(),SWT.ICON_INFORMATION |
+									SWT.OK);
+							messageBox.setText("Успешное создания директивного документа");
+							messageBox.setMessage("Служебная записка СТОП № " + textFieldComposite1.getText() + " успешно создана");
+							messageBox.open();
+							dispose();
+
+				} catch (TCException e3) {
+
+					MessageBox messageBox = new MessageBox(getShell(),SWT.ICON_ERROR |
+							SWT.OK);
+					messageBox.setText("Ошибка создания директивного документа");
+					messageBox.setMessage(e3.toString());
+					messageBox.open();
+
+
+				}
+
+					}
+
+			}
+		});
 
 
 
