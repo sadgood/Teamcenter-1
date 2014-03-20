@@ -18,10 +18,10 @@ import com.teamcenter.rac.kernel.TCException;
 import com.teamcenter.rac.kernel.TCSession;
 
 public class FileManager {
-	
-	
 
-	
+
+
+
 
 
 	 public static void createDirDoc (TCSession tcSession, String dirDocID, String dirDocDesc) throws TCException {
@@ -31,7 +31,7 @@ public class FileManager {
 
 
 				dirDoc = (TCComponentItemType)tcSession.getTypeComponent("Item");
-				dirDoc.create(dirDocID, "A","AS2_Detail", dirDocID, dirDocDesc, test);
+				dirDoc.create(dirDocID, "A","AS2_DirDoc", dirDocID, dirDocDesc, test);
 
 
 
