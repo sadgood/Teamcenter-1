@@ -1,4 +1,4 @@
-package com.mycom.addbutton.handlers;
+package ru.aerospacesystems.dirdoc.handlers;
 
 import javax.swing.JOptionPane;
 
@@ -8,8 +8,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
+
 import com.teamcenter.rac.aif.AIFDesktop;
 import com.teamcenter.rac.kernel.TCComponent;
+import com.teamcenter.rac.kernel.TCComponentBOMWindowType;
 import com.teamcenter.rac.kernel.TCComponentItem;
 import com.teamcenter.rac.kernel.TCComponentItemRevisionType;
 import com.teamcenter.rac.kernel.TCComponentItemType;
@@ -23,11 +25,11 @@ import com.teamcenter.rac.kernel.TCSession;
  * @see org.eclipse.core.commands.AbstractHandler
  */
 @SuppressWarnings("unused")
-public class SampleHandler extends AbstractHandler {
+public class DirDocHandler extends AbstractHandler {
 	/**
 	 * The constructor.
 	 */
-	public SampleHandler(){
+	public DirDocHandler(){
 
 	  }
 
@@ -38,8 +40,7 @@ public class SampleHandler extends AbstractHandler {
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-         MainWindowSwt.main(null);
-
+		MainWindowSwt.main(null);
 
 
 		return null;

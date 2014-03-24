@@ -1,4 +1,4 @@
-package com.mycom.addbutton;
+package ru.aerospacesystems.dirdoc;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

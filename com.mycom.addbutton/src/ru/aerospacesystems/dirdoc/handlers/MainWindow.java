@@ -1,4 +1,4 @@
-package com.mycom.addbutton.handlers;
+package ru.aerospacesystems.dirdoc.handlers;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -288,6 +288,9 @@ r1.addActionListener(al);
 r2.addActionListener(al);
 r7.addActionListener(al);
 okButton.addActionListener(a2);
+
+
+
 
 	}
 }

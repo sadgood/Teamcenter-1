@@ -1,4 +1,4 @@
-package com.mycom.addbutton.handlers;
+package ru.aerospacesystems.dirdoc.handlers;
 
 import javax.swing.JOptionPane;
 
@@ -232,6 +232,24 @@ public class MainWindowSwt extends Shell {
 
 					 try {
 							FileManager.createDirDoc(tcSession ,textFieldComposite1.getText(), "Служебная записка");
+							FileManager.createDataset(tcSession, "PDF", textFieldComposite1.getText());
+
+							try {
+								FileManager.pasteItem(tcSession, FileManager.getDirDoc(tcSession, textFieldComposite1.getText()));
+								FileManager.getDirDoc(tcSession, textFieldComposite1.getText()).add("IMAN_specification",FileManager.getDirDocDataset(tcSession, textFieldComposite1.getText()) );
+
+								System.out.println(FileManager.getDirDoc(tcSession, textFieldComposite1.getText()).toString());
+								System.out.println(FileManager.getDirDocRevision(tcSession, textFieldComposite1.getText()).toString());
+								System.out.println(FileManager.getDirDocDataset(tcSession, textFieldComposite1.getText()).toString());
+
+							} catch (Exception e1) {
+								// TODO Auto-generated catch block
+								MessageBox messageBox = new MessageBox(getShell(),SWT.ERROR |
+										SWT.OK);
+								messageBox.setText("Ошибка создания директивного документа");
+								messageBox.setMessage(e1.toString());
+								messageBox.open();
+							}
 
 							MessageBox messageBox = new MessageBox(getShell(),SWT.ICON_INFORMATION |
 									SWT.OK);
