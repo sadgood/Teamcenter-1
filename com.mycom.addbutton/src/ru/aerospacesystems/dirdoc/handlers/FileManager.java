@@ -3,6 +3,9 @@ package ru.aerospacesystems.dirdoc.handlers;
 import javax.swing.JOptionPane;
 
 import com.teamcenter.rac.aif.AIFDesktop;
+import com.teamcenter.rac.aif.AbstractAIFUIApplication;
+import com.teamcenter.rac.aif.kernel.InterfaceAIFComponent;
+import com.teamcenter.rac.aifrcp.AIFUtility;
 import com.teamcenter.rac.kernel.TCComponent;
 import com.teamcenter.rac.kernel.TCComponentBOMLine;
 import com.teamcenter.rac.kernel.TCComponentBOMWindow;
@@ -18,8 +21,31 @@ import com.teamcenter.rac.kernel.TCComponentQueryType;
 import com.teamcenter.rac.kernel.TCComponentUser;
 import com.teamcenter.rac.kernel.TCException;
 import com.teamcenter.rac.kernel.TCSession;
+import com.teamcenter.rac.kernel.VariantCondition;
 
 public class FileManager {
+
+
+
+	 public static String[][]  getSelectedObject ()  {
+		 AbstractAIFUIApplication app = AIFUtility.getCurrentApplication();
+		InterfaceAIFComponent pasteTargets[];
+		 pasteTargets = app.getTargetComponents();
+	     int numberOfOjects = pasteTargets.length;
+		 String[][] objects = new String[numberOfOjects][3];
+
+		 for (int i=0; i < numberOfOjects; i++)
+		 {
+			 objects[i][1] = pasteTargets[i].toString();
+			 String[] parts = objects[i][1].split("/");
+			 objects[i][1]  = parts[0];
+			 parts = parts[1].split(";");
+			 objects[i][2]  = parts[0];
+		 }
+
+        return objects;
+	  }
+
 
 
 
@@ -42,24 +68,80 @@ public class FileManager {
 
 	  }
 
-	 public static TCComponent getDirDoc (TCSession tcSession, String dirDocID ) throws TCException {
+	 public static TCComponent getDirDocRevision (TCSession tcSession, String dirDocID ) throws TCException {
 
 			TCComponentQuery tceItemQuery = null;
 
 	        TCComponentQueryType qType = (TCComponentQueryType) tcSession.getTypeComponent("ImanQuery");
 	        tceItemQuery = (TCComponentQuery) qType.find("Модификация изделия...");
 
-	        String entry[] = { "Идентификатор изделия" };
-	        String value[] = { dirDocID};
+	        String entry1[] = { "Идентификатор изделия" };
+	        String value1[] = { dirDocID };
 
-	        TCComponent[] result =  tceItemQuery.execute(entry, value);
+
+
+	        TCComponent[] result =  tceItemQuery.execute(entry1, value1);
 
 			return result[0];
 
 
 	  }
 
-	 public static TCComponent getDirDocRevision (TCSession tcSession, String dirDocID ) throws TCException {
+	 public static TCComponent getDirDocRevision2 (TCSession tcSession, String dirDocID, String dirDocIDRev  ) throws TCException {
+
+			TCComponentQuery tceItemQuery = null;
+
+	        TCComponentQueryType qType = (TCComponentQueryType) tcSession.getTypeComponent("ImanQuery");
+
+	        tceItemQuery = (TCComponentQuery) qType.find("Модификация изделия...");
+
+	        String entry1[] = { "Идентификатор изделия", "Модификация" };
+	        String value1[] = { dirDocID, dirDocIDRev };
+
+
+
+	        TCComponent[] result =  tceItemQuery.execute(entry1, value1);
+
+			return result[0];
+
+
+	  }
+
+	    public static void paste(TCComponent clipboardComponents, TCComponent[] selectedComponents, final String propertyKey) throws TCException {
+	        if (clipboardComponents == null) {
+	            return;
+	        }
+
+	        if (propertyKey.equals("bl_variant_condition") || propertyKey.equals("bl_condition_tag") || propertyKey.equals("bl_formula")) {
+	            if (!(clipboardComponents instanceof TCComponentBOMLine))
+	                return;
+	            try {
+	                TCComponentBOMLine line = (TCComponentBOMLine) clipboardComponents;
+	                TCComponent condition = line.getReferenceProperty("bl_condition_tag");
+	                if (condition == null) {
+	                    String varCondMvl = line.getProperty("bl_variant_condition");
+	                    TCComponentBOMLine toLine = (TCComponentBOMLine) selectedComponents[0];
+	                    toLine.getSession().getVariantService().setLineMvlCondition(toLine, varCondMvl);
+	                } else {
+	                    VariantCondition clauses = VariantCondition.create(condition, line.window());
+	                    selectedComponents[0].setReferenceProperty("bl_condition_tag", clauses.toCondition());
+	                }
+	            } catch (TCException e) {
+
+	            }
+	            return;
+	        }
+
+	        for (TCComponent selectedComponent : selectedComponents) {
+	            try {
+	                selectedComponent.setProperty(propertyKey, clipboardComponents.getProperty(propertyKey));
+	            } catch (TCException e) {
+
+	            }
+	        }
+	    }
+
+	 public static TCComponent getDirDoc (TCSession tcSession, String dirDocID ) throws TCException {
 
 			TCComponentQuery tceItemQuery = null;
 
@@ -76,15 +158,15 @@ public class FileManager {
 
 	  }
 
-	 public static TCComponent getDirDocDataset (TCSession tcSession, String dirDocID ) throws TCException {
+	 public static TCComponent getDirDocDataset (TCSession tcSession, String dirDocID, String type ) throws TCException {
 
 			TCComponentQuery tceItemQuery = null;
 
 	        TCComponentQueryType qType = (TCComponentQueryType) tcSession.getTypeComponent("ImanQuery");
 	        tceItemQuery = (TCComponentQuery) qType.find("Набор данных...");
 
-	        String entry[] = { "Имя" };
-	        String value[] = { dirDocID};
+	        String entry[] = { "Имя" , "Тип набора данных" };
+	        String value[] = { dirDocID , type};
 
 	        TCComponent[] result =  tceItemQuery.execute(entry, value);
 
@@ -93,6 +175,26 @@ public class FileManager {
 
 	  }
 
+	 public static TCComponent getDirDocDatasetStatus(TCSession tcSession, String dirDocID, String dirDocIDRev, String dirDocStatus) throws TCException {
+
+
+
+
+			TCComponentQuery tceItemQuery = null;
+
+	        TCComponentQueryType qType = (TCComponentQueryType) tcSession.getTypeComponent("ImanQuery");
+
+	        tceItemQuery = (TCComponentQuery) qType.find("Модификация изделия...");
+
+	        String entry1[] = { "Идентификатор изделия", "Модификация", "Статус выпуска" };
+	        String value1[] = { dirDocID, dirDocIDRev, dirDocStatus};
+
+	        TCComponent[] result =  tceItemQuery.execute(entry1, value1);
+
+		return result[0];
+
+
+		 }
 
 
 	 public static void pasteItem (TCSession session, TCComponent item) throws Exception {

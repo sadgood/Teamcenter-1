@@ -10,6 +10,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import com.teamcenter.rac.aif.AIFDesktop;
+import com.teamcenter.rac.aif.AbstractAIFUIApplication;
+import com.teamcenter.rac.aif.kernel.AbstractAIFSession;
+import com.teamcenter.rac.aif.kernel.InterfaceAIFComponent;
+import com.teamcenter.rac.aifrcp.AIFUtility;
 import com.teamcenter.rac.kernel.TCComponent;
 import com.teamcenter.rac.kernel.TCComponentBOMWindowType;
 import com.teamcenter.rac.kernel.TCComponentItem;
@@ -19,12 +23,14 @@ import com.teamcenter.rac.kernel.TCException;
 import com.teamcenter.rac.kernel.TCSession;
 
 
+
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */
 @SuppressWarnings("unused")
+
 public class DirDocHandler extends AbstractHandler {
 	/**
 	 * The constructor.
@@ -39,10 +45,15 @@ public class DirDocHandler extends AbstractHandler {
 	 * from the application context.
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		TCSession tcSession = (TCSession )AIFDesktop.getActiveDesktop().getCurrentApplication().getSession();
 
-		MainWindowSwt.main(null);
 
 
-		return null;
+	MainWindowSwt.main(null);
+
+
+  return null;
+
+
 	}
 }

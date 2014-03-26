@@ -1,39 +1,71 @@
 package ru.aerospacesystems.dirdoc.handlers;
 
-import javax.swing.JOptionPane;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.nebula.widgets.formattedtext.FormattedText;
+import org.eclipse.nebula.widgets.formattedtext.NumberFormatter;
+import org.eclipse.nebula.widgets.formattedtext.StringFormatter;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.nebula.widgets.formattedtext.MaskFormatter;
 
 import com.teamcenter.rac.aif.AIFDesktop;
-import com.teamcenter.rac.kernel.TCException;
+import com.teamcenter.rac.aif.kernel.InterfaceAIFComponent;
+import com.teamcenter.rac.kernel.TCComponent;
+import com.teamcenter.rac.kernel.TCComponentQuery;
+import com.teamcenter.rac.kernel.TCComponentQueryType;
 import com.teamcenter.rac.kernel.TCSession;
 
 public class MainWindowSwt extends Shell {
-	private Text textFieldComposite1;
-	private Table table;
+	private FormattedText dirDocIdTextField;
+	 private TableViewer viewer;
+	  // static fields to hold the images
+	 public final static String EDIT_MASK1 = "UU.UU-UUUU/UU-UU";
+	 public final static String EDIT_MASK2 = "UU.UUUU.-UU-UUUU-UU.UU";
+
+
+
+	private InterfaceAIFComponent pasteTargets[];
 
 	/**
 	 * Launch the application.
@@ -60,8 +92,14 @@ public class MainWindowSwt extends Shell {
 	 * @param display
 	 */
 	public MainWindowSwt(Display display) {
-		super(display, SWT.CLOSE | SWT.MIN | SWT.MAX | SWT.TITLE);
+		super(display, SWT.DIALOG_TRIM | SWT.MIN | SWT.MAX | SWT.ON_TOP);
+
+		setImage(ResourceManager.getPluginImage("ru.aerospacesystems.dirdoc", "icons/dirDoc.gif"));
+		setText("\u0421\u043E\u0437\u0434\u0430\u043D\u0438\u0435 \u0434\u0438\u0440\u0435\u043A\u0442\u0438\u0432\u043D\u043E\u0433\u043E \u0434\u043E\u043A\u0443\u043C\u0435\u043D\u0442\u0430");
 		final TCSession tcSession = (TCSession )AIFDesktop.getActiveDesktop().getCurrentApplication().getSession();
+
+
+
 		setSize(828, 499);
 		setLayout(new FormLayout());
 
@@ -87,6 +125,9 @@ public class MainWindowSwt extends Shell {
 		okButton.setText("\u041E\u041A");
 
 		Button cancelButton = new Button(ButtonComposite, SWT.NONE);
+		cancelButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
+
+
 		cancelButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -103,6 +144,7 @@ public class MainWindowSwt extends Shell {
 		fd_radioButtonComposite.top = new FormAttachment(0);
 		fd_radioButtonComposite.left = new FormAttachment(0);
 		radioButtonComposite.setLayoutData(fd_radioButtonComposite);
+
 
 		Label label_2 = new Label(radioButtonComposite, SWT.NONE);
 		label_2.setText("\u0412\u044B\u043F\u0443\u0441\u043A \u0438 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0435 \u041A\u0414");
@@ -171,6 +213,8 @@ public class MainWindowSwt extends Shell {
 		final StackLayout stackLayout = new StackLayout();
 		contentComposite.setLayout(stackLayout);
 
+
+
 		final Composite composite1 = new Composite(contentComposite, SWT.BORDER);
 		composite1.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
 
@@ -186,30 +230,153 @@ public class MainWindowSwt extends Shell {
 		composite1.setLayout(new FormLayout());
 
 		Composite composite_1 = new Composite(composite1, SWT.BORDER | SWT.EMBEDDED);
-		composite_1.setLayout(new RowLayout(SWT.HORIZONTAL));
+		composite_1.setLayout(null);
 		FormData fd_composite_1 = new FormData();
-		fd_composite_1.top = new FormAttachment(0, 10);
+		fd_composite_1.top = new FormAttachment(0);
+		fd_composite_1.left = new FormAttachment(0, 10);
+		fd_composite_1.right = new FormAttachment(100, -10);
 		composite_1.setLayoutData(fd_composite_1);
 
 		final CLabel labelComposite1 = new CLabel(composite_1, SWT.NONE);
-		labelComposite1.setLayoutData(new RowData(184, SWT.DEFAULT));
+		labelComposite1.setBounds(3, 3, 184, 21);
 		labelComposite1.setText("\u0421\u043B\u0443\u0436\u0435\u0431\u043D\u0430\u044F \u0437\u0430\u043F\u0438\u0441\u043A\u0430 \u2116");
 
-		textFieldComposite1 = new Text(composite_1, SWT.BORDER);
-		textFieldComposite1.setLayoutData(new RowData(199, SWT.DEFAULT));
+		dirDocIdTextField = new FormattedText(composite_1, SWT.BORDER);
+		final Text text = dirDocIdTextField.getControl();
+		text.setBounds(206, 3, 184, 21);
 
-		table = new Table(composite1, SWT.BORDER | SWT.FULL_SELECTION);
-		fd_composite_1.right = new FormAttachment(table, 0, SWT.RIGHT);
-		fd_composite_1.bottom = new FormAttachment(table, -6);
-		fd_composite_1.left = new FormAttachment(table, 0, SWT.LEFT);
-		FormData fd_table = new FormData();
-		fd_table.bottom = new FormAttachment(100, -10);
-		fd_table.top = new FormAttachment(0, 48);
-		fd_table.right = new FormAttachment(0, 564);
-		fd_table.left = new FormAttachment(0, 10);
-		table.setLayoutData(fd_table);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
+		dirDocIdTextField.setFormatter(new MaskFormatter(EDIT_MASK1));
+
+		Composite composite_2 = new Composite(composite1, SWT.NONE);
+		fd_composite_1.bottom = new FormAttachment(composite_2, -6);
+		composite_2.setLayout(new FillLayout(SWT.HORIZONTAL));
+		FormData fd_composite_2 = new FormData();
+		fd_composite_2.top = new FormAttachment(0, 50);
+		fd_composite_2.left = new FormAttachment(0, 10);
+		fd_composite_2.right = new FormAttachment(100, -10);
+
+		final SwitchButton button2 = new SwitchButton(composite_1, SWT.NONE);
+		button2.setBounds(399, 0, 151, 37);
+		button2.setText("");
+		button2.setTextForSelect("12");
+		button2.setTextForUnselect("16");
+		dirDocIdTextField.setValue("XXXXXXXXXXXX");
+		button2.addSelectionListener(new SelectionListener() {
+		        @Override
+		        public void widgetSelected(final SelectionEvent e) {
+		                if (button2.getSelection() == false){
+		                	dirDocIdTextField.setFormatter(new MaskFormatter(EDIT_MASK2));
+		                	dirDocIdTextField.setValue("XXXXXXXXXXXXXXXX");
+
+		                }
+		                else if (button2.getSelection() == true){
+		                	dirDocIdTextField.setFormatter(new MaskFormatter(EDIT_MASK1));
+		                	dirDocIdTextField.setValue("XXXXXXXXXXXX");
+
+		                }
+		        }
+
+		        @Override
+		        public void widgetDefaultSelected(final SelectionEvent e) {
+		        }
+		});
+		composite_2.setLayoutData(fd_composite_2);
+
+
+
+		Button addButton = new Button(composite1, SWT.NONE);
+		fd_composite_2.bottom = new FormAttachment(addButton, -17);
+		addButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+		String[][] selectedForTable = FileManager.getSelectedObject();
+		boolean isCloneExist = false;
+		try {
+
+
+			for (int i=0; i < selectedForTable.length; i++){
+				 ModelProvider persons = ModelProvider.INSTANCE;
+				 System.out.println("Dlina "+ persons.ModelProviderSize());
+
+
+
+				 for (int i2=0; i2 < persons.ModelProviderSize(); i2++){
+					 String id = TableManager.getColumn(i2).getFirstName();
+					 String rev = TableManager.getColumn(i2).getLastName();
+					 String ID = selectedForTable[i][1];
+					 String REV = selectedForTable[i][2];
+
+
+
+
+					 if (id.equals(ID) & rev.equals(REV)){
+						 System.out.println("True");
+							isCloneExist = true;
+						break;
+		}
+					 else if (!id.equals(ID) || !rev.equals(REV))
+					 {
+						 System.out.println("False");
+						 isCloneExist = false;
+					 }
+					 }
+
+          if ( isCloneExist == false){
+			TableManager.PasteColumn(selectedForTable[i][1],selectedForTable[i][2],"Отсутствует",viewer);
+          }
+			}
+			}
+
+
+
+
+
+		 catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+
+
+
+
+			        }
+
+			    });
+		FormData fd_addButton = new FormData();
+		fd_addButton.right = new FormAttachment(100, -305);
+		fd_addButton.left = new FormAttachment(0, 10);
+		fd_addButton.bottom = new FormAttachment(100, -10);
+		addButton.setLayoutData(fd_addButton);
+		addButton.setText("\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C");
+
+		Button removeButton = new Button(composite1, SWT.NONE);
+		removeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				 ISelection selection = viewer.getSelection();
+
+					    if (selection != null && selection instanceof IStructuredSelection) {
+					      List<ItemRevisonObject> persons = ModelProvider.INSTANCE.getPersons();
+					      IStructuredSelection sel = (IStructuredSelection) selection;
+
+					      for (Iterator<ItemRevisonObject> iterator = sel.iterator(); iterator.hasNext();) {
+					        ItemRevisonObject person = iterator.next();
+					        persons.remove(person);
+					      }
+					      viewer.refresh();
+					    }
+			}
+		});
+		FormData fd_removeButton = new FormData();
+		fd_removeButton.top = new FormAttachment(addButton, 0, SWT.TOP);
+		fd_removeButton.right = new FormAttachment(100, -10);
+		fd_removeButton.left = new FormAttachment(0, 316);
+		removeButton.setLayoutData(fd_removeButton);
+		removeButton.setText("\u0423\u0434\u0430\u043B\u0438\u0442\u044C");
+
+    createPartControl(composite_2);
 		rb7.addListener (SWT.Selection, new Listener () {
 			@Override
 			public void handleEvent(Event arg0) {
@@ -225,75 +392,94 @@ public class MainWindowSwt extends Shell {
 
 			});
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		okButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				String dirDocId = dirDocIdTextField.getControl().getText();
+				 ModelProvider persons = ModelProvider.INSTANCE;
 				if (rb7.getSelection() != true) {
-
-					 try {
-							FileManager.createDirDoc(tcSession ,textFieldComposite1.getText(), "Служебная записка");
-							FileManager.createDataset(tcSession, "PDF", textFieldComposite1.getText());
-
-							try {
-								FileManager.pasteItem(tcSession, FileManager.getDirDoc(tcSession, textFieldComposite1.getText()));
-								FileManager.getDirDoc(tcSession, textFieldComposite1.getText()).add("IMAN_specification",FileManager.getDirDocDataset(tcSession, textFieldComposite1.getText()) );
-
-								System.out.println(FileManager.getDirDoc(tcSession, textFieldComposite1.getText()).toString());
-								System.out.println(FileManager.getDirDocRevision(tcSession, textFieldComposite1.getText()).toString());
-								System.out.println(FileManager.getDirDocDataset(tcSession, textFieldComposite1.getText()).toString());
-
-							} catch (Exception e1) {
-								// TODO Auto-generated catch block
-								MessageBox messageBox = new MessageBox(getShell(),SWT.ERROR |
-										SWT.OK);
-								messageBox.setText("Ошибка создания директивного документа");
-								messageBox.setMessage(e1.toString());
-								messageBox.open();
-							}
-
-							MessageBox messageBox = new MessageBox(getShell(),SWT.ICON_INFORMATION |
-									SWT.OK);
-							messageBox.setText("Успешное создания директивного документа");
-							messageBox.setMessage("Служебная записка № " + textFieldComposite1.getText() + " успешно создана");
-							messageBox.open();
-							dispose();
-
-							dispose();
-						} catch (TCException e2) {
-							MessageBox messageBox = new MessageBox(getShell(),SWT.ERROR |
-									SWT.OK);
-							messageBox.setText("Ошибка создания директивного документа");
-							messageBox.setMessage(e2.toString());
-							messageBox.open();
-
-						}
-
-				}
-				if (rb1.getSelection() != true) {
-
-					 try {
-							FileManager.createDirDoc(tcSession ,textFieldComposite1.getText(), "Служебная записка СТОП");
-
-							MessageBox messageBox = new MessageBox(getShell(),SWT.ICON_INFORMATION |
-									SWT.OK);
-							messageBox.setText("Успешное создания директивного документа");
-							messageBox.setMessage("Служебная записка СТОП № " + textFieldComposite1.getText() + " успешно создана");
-							messageBox.open();
-							dispose();
-
-				} catch (TCException e3) {
-
-					MessageBox messageBox = new MessageBox(getShell(),SWT.ICON_ERROR |
-							SWT.OK);
-					messageBox.setText("Ошибка создания директивного документа");
-					messageBox.setMessage(e3.toString());
-					messageBox.open();
+					TCComponent dirDocRevision = null;
 
 
-				}
+					 //						 //Создание ДД
+											try {
+												FileManager.createDirDoc(tcSession ,dirDocId, "Служебная записка");
 
-					}
+												 //Создание PDF в ДД
+											FileManager.createDataset(tcSession, "PDF", dirDocId);
+											FileManager.createDataset(tcSession, "MSWORD", dirDocId);
+					//
 
+					//								 //ДД в ньюстафф
+					FileManager.pasteItem(tcSession, FileManager.getDirDoc(tcSession, dirDocIdTextField.getControl().getText()));
+												//свзяь ДД т ПДФ
+					dirDocRevision = FileManager.getDirDocRevision(tcSession, dirDocIdTextField.getControl().getText());
+													dirDocRevision .add("IMAN_specification",FileManager.getDirDocDataset(tcSession, dirDocIdTextField.getControl().getText(), "PDF") );
+													dirDocRevision .add("IMAN_specification",FileManager.getDirDocDataset(tcSession, dirDocIdTextField.getControl().getText(), "MSWORD") );
+													GuiManager.infoMessage("Успешное создания директивного документа", "Служебная записка № " + dirDocIdTextField.getControl().getText() + " успешно создана", getShell());
+					/////////////////////////////////
+											} catch (Exception e1) {
+
+
+												try {
+													GuiManager.errorMessage("Ошибка создания директивного документа", e1.toString(), getShell());
+												} catch (Exception e3) {
+
+												}
+
+
+
+
+
+
+	}
+											try {
+											for (int i=0; i < persons.ModelProviderSize(); i++){
+												dirDocRevision = FileManager.getDirDocRevision(tcSession, dirDocIdTextField.getControl().getText());
+													TCComponent otherFileRev =FileManager.getDirDocRevision2(tcSession, TableManager.getColumn(i).getFirstName(), TableManager.getColumn(i).getLastName());
+													otherFileRev.add("AS2_guidingdocuments", dirDocRevision);
+													dirDocRevision.add("AS2_AttachedDoc", otherFileRev);
+
+											}dispose();} catch (Exception e1) {
+													try {
+														GuiManager.errorMessage("Ошибка прикрепления прилагаемых документов", e1.toString(), getShell());
+													} catch (Exception e3) {
+
+													}
+
+
+													}
+
+			//////////////////////////
+
+
+													// TODO Auto-generated catch block
+
+
+
+			}
 			}
 		});
 
@@ -304,11 +490,99 @@ public class MainWindowSwt extends Shell {
 
 	}
 
+	 private void createViewer(Composite parent) {
+		    viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
+		        | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+
+		    createColumns(parent, viewer);
+		    final Table table = viewer.getTable();
+		    table.setHeaderVisible(true);
+		    table.setLinesVisible(true);
+
+		    viewer.setContentProvider(new ArrayContentProvider());
+		    // get the content for the viewer, setInput will call getElements in the
+		    // contentProvider
+		    viewer.setInput(ModelProvider.INSTANCE.getPersons());
+		    // make the selection available to other views
+		    //getSite().setSelectionProvider(viewer);
+		    // set the sorter for the table
+
+		    // define layout for the viewer
+		    GridData gridData = new GridData();
+		    gridData.verticalAlignment = GridData.FILL;
+		    gridData.horizontalSpan = 2;
+		    gridData.grabExcessHorizontalSpace = true;
+		    gridData.grabExcessVerticalSpace = true;
+		    gridData.horizontalAlignment = GridData.FILL;
+		    viewer.getControl().setLayoutData(gridData);
+		  }
+
+	 private void createColumns(final Composite parent, final TableViewer viewer) {
+		    String[] titles = { "Идентификатор", "Ревизия", "Статус"};
+		    int[] bounds = { 150, 150, 150 };
+
+		    // first column is for the first name
+		    TableViewerColumn col = createTableViewerColumn(titles[0], bounds[0], 0);
+		    col.setLabelProvider(new ColumnLabelProvider() {
+		      @Override
+		      public String getText(Object element) {
+		        ItemRevisonObject p = (ItemRevisonObject) element;
+		        return p.getFirstName();
+		      }
+		    });
+
+		    // second column is for the last name
+		    col = createTableViewerColumn(titles[1], bounds[1], 1);
+		    col.setLabelProvider(new ColumnLabelProvider() {
+		      @Override
+		      public String getText(Object element) {
+		        ItemRevisonObject p = (ItemRevisonObject) element;
+		        return p.getLastName();
+		      }
+		    });
+
+		    // now the gender
+		    col = createTableViewerColumn(titles[2], bounds[2], 2);
+		    col.setLabelProvider(new ColumnLabelProvider() {
+		      @Override
+		      public String getText(Object element) {
+		        ItemRevisonObject p = (ItemRevisonObject) element;
+		        return p.getGender();
+		      }
+		    });
+
+		    // now the status married
+
+
+
+		  }
+
+		  private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
+		    final TableViewerColumn viewerColumn = new TableViewerColumn(viewer,
+		        SWT.NONE);
+		    final TableColumn column = viewerColumn.getColumn();
+		    column.setText(title);
+		    column.setWidth(bound);
+		    column.setResizable(true);
+		    column.setMoveable(true);
+		    return viewerColumn;
+		  }
+
+		  public TableViewer getViewer() {
+		    return viewer;
+		  }
+
+	  public void createPartControl(Composite parent) {
+		    GridLayout layout = new GridLayout(2, false);
+		    parent.setLayout(layout);
+
+		    createViewer(parent);
+		  }
 	/**
 	 * Create contents of the shell.
 	 */
 	protected void createContents() {
-		setText("SWT Application");
+		setText("Директивные документы");
 		setSize(812, 483);
 
 	}
