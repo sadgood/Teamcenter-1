@@ -3,16 +3,16 @@ package ru.aerospacesystems.dirdoc.handlers;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-public class ItemRevisonObject {
+public class AttachedDocObject {
   private String identifier;
   private String revision;
   private String status;
   private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-  public ItemRevisonObject() {
+  public AttachedDocObject() {
   }
 
-  public ItemRevisonObject(String identifier, String revision, String status) {
+  public AttachedDocObject(String identifier, String revision, String status) {
     super();
     this.identifier = identifier;
     this.revision = revision;

@@ -9,17 +9,23 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import ru.aerospacesystems.dirdoc.dirDocCreation.MainWindowSwt;
+
 import com.teamcenter.rac.aif.AIFDesktop;
 import com.teamcenter.rac.aif.AbstractAIFUIApplication;
 import com.teamcenter.rac.aif.kernel.AbstractAIFSession;
 import com.teamcenter.rac.aif.kernel.InterfaceAIFComponent;
 import com.teamcenter.rac.aifrcp.AIFUtility;
 import com.teamcenter.rac.kernel.TCComponent;
+import com.teamcenter.rac.kernel.TCComponentBOMWindow;
 import com.teamcenter.rac.kernel.TCComponentBOMWindowType;
 import com.teamcenter.rac.kernel.TCComponentItem;
+import com.teamcenter.rac.kernel.TCComponentItemRevision;
 import com.teamcenter.rac.kernel.TCComponentItemRevisionType;
 import com.teamcenter.rac.kernel.TCComponentItemType;
+import com.teamcenter.rac.kernel.TCComponentManager;
 import com.teamcenter.rac.kernel.TCException;
+import com.teamcenter.rac.kernel.TCProperty;
 import com.teamcenter.rac.kernel.TCSession;
 
 
@@ -32,6 +38,9 @@ import com.teamcenter.rac.kernel.TCSession;
 @SuppressWarnings("unused")
 
 public class DirDocHandler extends AbstractHandler {
+	private String[] relatedIDBases;
+
+
 	/**
 	 * The constructor.
 	 */
@@ -45,15 +54,10 @@ public class DirDocHandler extends AbstractHandler {
 	 * from the application context.
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		TCSession tcSession = (TCSession )AIFDesktop.getActiveDesktop().getCurrentApplication().getSession();
+		MainWindowSwt.main(null);
 
 
-
-	MainWindowSwt.main(null);
-
-
-  return null;
-
+		return null;
 
 	}
 }

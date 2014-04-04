@@ -3,13 +3,13 @@ package ru.aerospacesystems.dirdoc.handlers;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum ModelProvider {
+public enum DirDocCreatModelProvider {
   INSTANCE;
 
-  public List<ItemRevisonObject> persons;
+  public List<AttachedDocObject> persons;
 
-  ModelProvider() {
-    persons = new ArrayList<ItemRevisonObject>();
+  DirDocCreatModelProvider() {
+    persons = new ArrayList<AttachedDocObject>();
     // Image here some fancy database access to read the persons and to
     // put them into the model
 
@@ -19,7 +19,7 @@ public enum ModelProvider {
 	return persons.size();
 			 
 	  }
-  public List<ItemRevisonObject> getPersons() {
+  public List<AttachedDocObject> getPersons() {
     return persons;
   }
 

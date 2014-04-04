@@ -46,9 +46,22 @@ public class FileManager {
         return objects;
 	  }
 
+	 public static String getDirDocIdFromObjectString(String objectString){
+		 String[] id = objectString.split("/");
+		return id[0];
+		 
+	 }
+	 
+	 public static TCComponent[] getRelated (TCComponent dirDocRev) throws TCException {
+
+			TCComponent[] related = dirDocRev.getRelatedComponents("AS2_AttachedDoc");
+
+			return related;
 
 
+	  }
 
+   
 
 
 
@@ -68,7 +81,7 @@ public class FileManager {
 
 	  }
 
-	 public static TCComponent getDirDocRevision (TCSession tcSession, String dirDocID ) throws TCException {
+	 public static TCComponent  getDirDocRevision (TCSession tcSession, String dirDocID ) throws TCException {
 
 			TCComponentQuery tceItemQuery = null;
 
@@ -80,7 +93,7 @@ public class FileManager {
 
 
 
-	        TCComponent[] result =  tceItemQuery.execute(entry1, value1);
+	        TCComponent [] result =  tceItemQuery.execute(entry1, value1);
 
 			return result[0];
 

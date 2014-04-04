@@ -1,4 +1,4 @@
-package ru.aerospacesystems.dirdoc.handlers;
+package ru.aerospacesystems.dirdoc.dirDocCreation;
 
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +11,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.nebula.widgets.formattedtext.FormattedText;
 import org.eclipse.nebula.widgets.formattedtext.NumberFormatter;
 import org.eclipse.nebula.widgets.formattedtext.StringFormatter;
@@ -49,16 +48,31 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.nebula.widgets.formattedtext.MaskFormatter;
 
+import ru.aerospacesystems.dirdoc.handlers.EffectivityObject;
+import ru.aerospacesystems.dirdoc.handlers.FileManager;
+import ru.aerospacesystems.dirdoc.handlers.GuiManager;
+import ru.aerospacesystems.dirdoc.handlers.AttachedDocObject;
+import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider;
+import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider2;
+import ru.aerospacesystems.dirdoc.handlers.SwitchButton;
+import ru.aerospacesystems.dirdoc.handlers.TableManager;
+import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.TableForAttachedDocuments;
+import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.TableForEffectivity;
+
 import com.teamcenter.rac.aif.AIFDesktop;
 import com.teamcenter.rac.aif.kernel.InterfaceAIFComponent;
 import com.teamcenter.rac.kernel.TCComponent;
 import com.teamcenter.rac.kernel.TCComponentQuery;
 import com.teamcenter.rac.kernel.TCComponentQueryType;
+import com.teamcenter.rac.kernel.TCException;
 import com.teamcenter.rac.kernel.TCSession;
+
+import org.eclipse.swt.widgets.Combo;
 
 public class MainWindowSwt extends Shell {
 	private FormattedText dirDocIdTextField;
-	 private TableViewer viewer;
+	// private TableViewer viewer;
+	// private TableViewer viewer2;
 	  // static fields to hold the images
 	 public final static String EDIT_MASK1 = "UU.UU-UUUU/UU-UU";
 	 public final static String EDIT_MASK2 = "UU.UUUU.-UU-UUUU-UU.UU";
@@ -66,6 +80,7 @@ public class MainWindowSwt extends Shell {
 
 
 	private InterfaceAIFComponent pasteTargets[];
+	private Text instanceField;
 
 	/**
 	 * Launch the application.
@@ -248,17 +263,15 @@ public class MainWindowSwt extends Shell {
 		dirDocIdTextField.setFormatter(new MaskFormatter(EDIT_MASK1));
 
 		Composite composite_2 = new Composite(composite1, SWT.NONE);
-		fd_composite_1.bottom = new FormAttachment(composite_2, -6);
 		composite_2.setLayout(new FillLayout(SWT.HORIZONTAL));
 		FormData fd_composite_2 = new FormData();
-		fd_composite_2.top = new FormAttachment(0, 50);
 		fd_composite_2.left = new FormAttachment(0, 10);
 		fd_composite_2.right = new FormAttachment(100, -10);
 
 		final SwitchButton button2 = new SwitchButton(composite_1, SWT.NONE);
 		button2.setBounds(399, 0, 151, 37);
 		button2.setText("");
-		button2.setTextForSelect("12");
+		button2.setTextForSelect("\"ОКБ \"АКС\"");
 		button2.setTextForUnselect("16");
 		dirDocIdTextField.setValue("XXXXXXXXXXXX");
 		button2.addSelectionListener(new SelectionListener() {
@@ -281,11 +294,14 @@ public class MainWindowSwt extends Shell {
 		        }
 		});
 		composite_2.setLayoutData(fd_composite_2);
+		Composite composite_3 = new Composite(composite1, SWT.NONE);
 
-
-
+		final TableForAttachedDocuments tableForAttachedDocuments	= new  TableForAttachedDocuments();
+		tableForAttachedDocuments.createPartControl(composite_2);
+		final TableForEffectivity tableForEffectivity =new  TableForEffectivity();
+		tableForEffectivity.createPartControl(composite_3);
 		Button addButton = new Button(composite1, SWT.NONE);
-		fd_composite_2.bottom = new FormAttachment(addButton, -17);
+		fd_composite_2.bottom = new FormAttachment(addButton, -6);
 		addButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -296,7 +312,7 @@ public class MainWindowSwt extends Shell {
 
 
 			for (int i=0; i < selectedForTable.length; i++){
-				 ModelProvider persons = ModelProvider.INSTANCE;
+				 DirDocCreatModelProvider persons = DirDocCreatModelProvider.INSTANCE;
 				 System.out.println("Dlina "+ persons.ModelProviderSize());
 
 
@@ -323,7 +339,8 @@ public class MainWindowSwt extends Shell {
 					 }
 
           if ( isCloneExist == false){
-			TableManager.PasteColumn(selectedForTable[i][1],selectedForTable[i][2],"Отсутствует",viewer);
+			TableManager.PasteColumn(selectedForTable[i][1],selectedForTable[i][2],"Отсутствует",tableForAttachedDocuments.getViewer());
+
           }
 			}
 			}
@@ -355,17 +372,17 @@ public class MainWindowSwt extends Shell {
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				 ISelection selection = viewer.getSelection();
+				 ISelection selection = tableForAttachedDocuments.getViewer().getSelection();
 
 					    if (selection != null && selection instanceof IStructuredSelection) {
-					      List<ItemRevisonObject> persons = ModelProvider.INSTANCE.getPersons();
+					      List<AttachedDocObject> persons = DirDocCreatModelProvider.INSTANCE.getPersons();
 					      IStructuredSelection sel = (IStructuredSelection) selection;
 
-					      for (Iterator<ItemRevisonObject> iterator = sel.iterator(); iterator.hasNext();) {
-					        ItemRevisonObject person = iterator.next();
+					      for (Iterator<AttachedDocObject> iterator = sel.iterator(); iterator.hasNext();) {
+					        AttachedDocObject person = iterator.next();
 					        persons.remove(person);
 					      }
-					      viewer.refresh();
+					      tableForAttachedDocuments.getViewer().refresh();
 					    }
 			}
 		});
@@ -376,7 +393,66 @@ public class MainWindowSwt extends Shell {
 		removeButton.setLayoutData(fd_removeButton);
 		removeButton.setText("\u0423\u0434\u0430\u043B\u0438\u0442\u044C");
 
-    createPartControl(composite_2);
+
+		fd_composite_2.top = new FormAttachment(0, 137);
+		FormData fd_composite_3 = new FormData();
+		fd_composite_3.bottom = new FormAttachment(composite_2, -6);
+		fd_composite_3.top = new FormAttachment(composite_1, 6);
+		fd_composite_3.left = new FormAttachment(0, 10);
+		composite_3.setLayoutData(fd_composite_3);
+
+		Label lblNewLabel = new Label(composite1, SWT.NONE);
+		fd_composite_3.right = new FormAttachment(lblNewLabel, -6);
+		fd_composite_1.bottom = new FormAttachment(100, -396);
+		FormData fd_lblNewLabel = new FormData();
+		fd_lblNewLabel.left = new FormAttachment(0, 340);
+		lblNewLabel.setLayoutData(fd_lblNewLabel);
+		lblNewLabel.setText("\u041F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u043C\u043E\u0441\u0442\u044C");
+
+		final Combo itemField = new Combo(composite1, SWT.NONE);
+		itemField.setItems(new String[] {"MC-21", "ST-21"});
+		fd_lblNewLabel.bottom = new FormAttachment(100, -377);
+		FormData fd_itemField = new FormData();
+		fd_itemField.left = new FormAttachment(composite_3, 6);
+		fd_itemField.top = new FormAttachment(lblNewLabel, 6);
+		itemField.setLayoutData(fd_itemField);
+
+		instanceField = new Text(composite1, SWT.BORDER);
+		FormData fd_instanceField = new FormData();
+		fd_instanceField.top = new FormAttachment(lblNewLabel, 6);
+		fd_instanceField.right = new FormAttachment(composite_1, 0, SWT.RIGHT);
+		fd_instanceField.left = new FormAttachment(itemField, 6);
+		instanceField.setLayoutData(fd_instanceField);
+
+		Button btnNewButton = new Button(composite1, SWT.NONE);
+		btnNewButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					TableManager.PasteColumn2(itemField.getText(),instanceField.getText(), tableForEffectivity.getViewer());
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		FormData fd_btnNewButton = new FormData();
+		fd_btnNewButton.top = new FormAttachment(composite_2, -31, SWT.TOP);
+		fd_btnNewButton.bottom = new FormAttachment(composite_2, -6);
+		fd_btnNewButton.left = new FormAttachment(composite_3, 6);
+		btnNewButton.setLayoutData(fd_btnNewButton);
+		btnNewButton.setText("\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C");
+
+		Button btnNewButton_1 = new Button(composite1, SWT.NONE);
+		fd_btnNewButton.right = new FormAttachment(btnNewButton_1, -6);
+		FormData fd_btnNewButton_1 = new FormData();
+		fd_btnNewButton_1.bottom = new FormAttachment(composite_2, -6);
+		fd_btnNewButton_1.right = new FormAttachment(composite_1, 0, SWT.RIGHT);
+		fd_btnNewButton_1.left = new FormAttachment(0, 458);
+		btnNewButton_1.setLayoutData(fd_btnNewButton_1);
+		btnNewButton_1.setText("\u0423\u0434\u0430\u043B\u0438\u0442\u044C");
+
+
 		rb7.addListener (SWT.Selection, new Listener () {
 			@Override
 			public void handleEvent(Event arg0) {
@@ -418,7 +494,8 @@ public class MainWindowSwt extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String dirDocId = dirDocIdTextField.getControl().getText();
-				 ModelProvider persons = ModelProvider.INSTANCE;
+				 DirDocCreatModelProvider persons = DirDocCreatModelProvider.INSTANCE;
+				 DirDocCreatModelProvider2 persons2 = DirDocCreatModelProvider2.INSTANCE;
 				if (rb7.getSelection() != true) {
 					TCComponent dirDocRevision = null;
 
@@ -439,6 +516,15 @@ public class MainWindowSwt extends Shell {
 													dirDocRevision .add("IMAN_specification",FileManager.getDirDocDataset(tcSession, dirDocIdTextField.getControl().getText(), "PDF") );
 													dirDocRevision .add("IMAN_specification",FileManager.getDirDocDataset(tcSession, dirDocIdTextField.getControl().getText(), "MSWORD") );
 													GuiManager.infoMessage("Успешное создания директивного документа", "Служебная записка № " + dirDocIdTextField.getControl().getText() + " успешно создана", getShell());
+                                                    String effectivityString = new String();
+
+													for (int i=0; i < persons2.ModelProviderSize(); i++){
+														effectivityString = effectivityString + "//" + TableManager.getColumn2(i).toString();
+													}
+
+														dirDocRevision.setStringProperty("gov_classification", effectivityString);
+
+
 					/////////////////////////////////
 											} catch (Exception e1) {
 
@@ -461,6 +547,7 @@ public class MainWindowSwt extends Shell {
 													TCComponent otherFileRev =FileManager.getDirDocRevision2(tcSession, TableManager.getColumn(i).getFirstName(), TableManager.getColumn(i).getLastName());
 													otherFileRev.add("AS2_guidingdocuments", dirDocRevision);
 													dirDocRevision.add("AS2_AttachedDoc", otherFileRev);
+
 
 											}dispose();} catch (Exception e1) {
 													try {
@@ -489,95 +576,8 @@ public class MainWindowSwt extends Shell {
 
 
 	}
+/////////////TABLE1
 
-	 private void createViewer(Composite parent) {
-		    viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
-		        | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-
-		    createColumns(parent, viewer);
-		    final Table table = viewer.getTable();
-		    table.setHeaderVisible(true);
-		    table.setLinesVisible(true);
-
-		    viewer.setContentProvider(new ArrayContentProvider());
-		    // get the content for the viewer, setInput will call getElements in the
-		    // contentProvider
-		    viewer.setInput(ModelProvider.INSTANCE.getPersons());
-		    // make the selection available to other views
-		    //getSite().setSelectionProvider(viewer);
-		    // set the sorter for the table
-
-		    // define layout for the viewer
-		    GridData gridData = new GridData();
-		    gridData.verticalAlignment = GridData.FILL;
-		    gridData.horizontalSpan = 2;
-		    gridData.grabExcessHorizontalSpace = true;
-		    gridData.grabExcessVerticalSpace = true;
-		    gridData.horizontalAlignment = GridData.FILL;
-		    viewer.getControl().setLayoutData(gridData);
-		  }
-
-	 private void createColumns(final Composite parent, final TableViewer viewer) {
-		    String[] titles = { "Идентификатор", "Ревизия", "Статус"};
-		    int[] bounds = { 150, 150, 150 };
-
-		    // first column is for the first name
-		    TableViewerColumn col = createTableViewerColumn(titles[0], bounds[0], 0);
-		    col.setLabelProvider(new ColumnLabelProvider() {
-		      @Override
-		      public String getText(Object element) {
-		        ItemRevisonObject p = (ItemRevisonObject) element;
-		        return p.getFirstName();
-		      }
-		    });
-
-		    // second column is for the last name
-		    col = createTableViewerColumn(titles[1], bounds[1], 1);
-		    col.setLabelProvider(new ColumnLabelProvider() {
-		      @Override
-		      public String getText(Object element) {
-		        ItemRevisonObject p = (ItemRevisonObject) element;
-		        return p.getLastName();
-		      }
-		    });
-
-		    // now the gender
-		    col = createTableViewerColumn(titles[2], bounds[2], 2);
-		    col.setLabelProvider(new ColumnLabelProvider() {
-		      @Override
-		      public String getText(Object element) {
-		        ItemRevisonObject p = (ItemRevisonObject) element;
-		        return p.getGender();
-		      }
-		    });
-
-		    // now the status married
-
-
-
-		  }
-
-		  private TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
-		    final TableViewerColumn viewerColumn = new TableViewerColumn(viewer,
-		        SWT.NONE);
-		    final TableColumn column = viewerColumn.getColumn();
-		    column.setText(title);
-		    column.setWidth(bound);
-		    column.setResizable(true);
-		    column.setMoveable(true);
-		    return viewerColumn;
-		  }
-
-		  public TableViewer getViewer() {
-		    return viewer;
-		  }
-
-	  public void createPartControl(Composite parent) {
-		    GridLayout layout = new GridLayout(2, false);
-		    parent.setLayout(layout);
-
-		    createViewer(parent);
-		  }
 	/**
 	 * Create contents of the shell.
 	 */
@@ -591,4 +591,22 @@ public class MainWindowSwt extends Shell {
 	protected void checkSubclass() {
 		// Disable the check that prevents subclassing of SWT components
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

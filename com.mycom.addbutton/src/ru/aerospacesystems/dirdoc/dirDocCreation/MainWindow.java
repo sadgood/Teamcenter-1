@@ -1,4 +1,4 @@
-package ru.aerospacesystems.dirdoc.handlers;
+package ru.aerospacesystems.dirdoc.dirDocCreation;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -20,6 +20,8 @@ import java.text.ParseException;
 
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+
+import ru.aerospacesystems.dirdoc.handlers.FileManager;
 
 import com.teamcenter.rac.aif.AIFDesktop;
 import com.teamcenter.rac.kernel.TCException;
