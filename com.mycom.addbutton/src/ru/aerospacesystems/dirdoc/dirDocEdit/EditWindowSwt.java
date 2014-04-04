@@ -48,6 +48,8 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.nebula.widgets.formattedtext.MaskFormatter;
 
+import ru.aerospacesystems.dirdoc.handlers.DirDocEditAttachedDocModelProvider;
+import ru.aerospacesystems.dirdoc.handlers.DirDocEditEffectivityModelProvider;
 import ru.aerospacesystems.dirdoc.handlers.EffectivityObject;
 import ru.aerospacesystems.dirdoc.handlers.FileManager;
 import ru.aerospacesystems.dirdoc.handlers.GuiManager;
@@ -56,6 +58,8 @@ import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider;
 import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider2;
 import ru.aerospacesystems.dirdoc.handlers.SwitchButton;
 import ru.aerospacesystems.dirdoc.handlers.TableManager;
+import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.EditTableForAttachedDocuments;
+import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.EditTableForEffectivity;
 import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.TableForAttachedDocuments;
 import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.TableForEffectivity;
 
@@ -80,6 +84,7 @@ public class EditWindowSwt extends Shell {
 
 	private InterfaceAIFComponent pasteTargets[];
 	private Text instanceField;
+
 
 	/**
 	 * Launch the application.
@@ -158,19 +163,64 @@ public class EditWindowSwt extends Shell {
 																final CLabel editedDirDocLabel = new CLabel(composite_1, SWT.NONE);
 																editedDirDocLabel.setBounds(3, 3, 184, 21);
 
-																editedDirDocLabel.setText(FileManager.getSelectedObject()[0][1]+"/"+FileManager.getSelectedObject()[0][2]);
+																editedDirDocLabel.setText(FileManager.getSelectedObject()[0][1]);
 
-																		Composite composite_2 = new Composite(composite1, SWT.NONE);
-																		composite_2.setLayout(new FillLayout(SWT.HORIZONTAL));
-																		FormData fd_composite_2 = new FormData();
-																		fd_composite_2.left = new FormAttachment(0, 10);
-																		fd_composite_2.right = new FormAttachment(100, -10);
-																		composite_2.setLayoutData(fd_composite_2);
-																		Composite composite_3 = new Composite(composite1, SWT.NONE);
+																Composite composite_2 = new Composite(composite1, SWT.NONE);
+																composite_2.setLayout(new FillLayout(SWT.HORIZONTAL));
+																FormData fd_composite_2 = new FormData();
+																fd_composite_2.left = new FormAttachment(0, 10);
+																fd_composite_2.right = new FormAttachment(100, -10);
+																composite_2.setLayoutData(fd_composite_2);
+																Composite composite_3 = new Composite(composite1, SWT.NONE);
+
+
+																final EditTableForAttachedDocuments editTableForAttachedDocuments = new EditTableForAttachedDocuments();
+																final EditTableForEffectivity editTableForEffectivity = new EditTableForEffectivity();
+																try {
+																	TableManager.ClearEnum3(editTableForAttachedDocuments.getViewer());
+																} catch (Exception e2) {
+																	// TODO Auto-generated catch block
+																	e2.printStackTrace();
+																}
+																editTableForAttachedDocuments.createPartControl(composite_2);
+																editTableForEffectivity.createPartControl(composite_3);
+																TCComponent dirDocRel = null;
+																try {
+																	dirDocRel = FileManager.getDirDocRevision(tcSession, editedDirDocLabel.getText());
+																} catch (TCException e2) {
+																	// TODO Auto-generated catch block
+																	e2.printStackTrace();
+																}
+
+																try {
+
+																	System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+ dirDocRel.getStringProperty("object_string"));
+																	TCComponent[] related = FileManager.getRelated(dirDocRel);
+
+
+																for (int i=0; i<related.length; i++){
+
+																		String relatedID =related[i].getStringProperty("object_string");
+																		 String[] parts = relatedID.split("/");
+
+																	 String[] parts2 = parts[1].split(";");
+																 String[] parts3 = parts[1].split(";");
+
+
+																		 TableManager.PasteColumn3(parts[0], parts2[0], parts2[1], editTableForAttachedDocuments.getViewer());
+																		}
+
+
+																} catch (Exception e1) {
+																	// TODO Auto-generated catch block
+																	e1.printStackTrace();
+																}
+
+
 
 
 																				fd_composite_2.top = new FormAttachment(composite_3, 6);
-
+																				final Combo itemField = new Combo(composite1, SWT.NONE);
 																		Button addButton = new Button(composite1, SWT.NONE);
 																		fd_composite_2.bottom = new FormAttachment(addButton, -6);
 																		addButton.addSelectionListener(new SelectionAdapter() {
@@ -190,10 +240,33 @@ public class EditWindowSwt extends Shell {
 																				removeButton.addSelectionListener(new SelectionAdapter() {
 																					@Override
 																					public void widgetSelected(SelectionEvent e) {
+																						 ISelection selection = editTableForAttachedDocuments.getViewer().getSelection();
 
-																							    }
+																						    if (selection != null && selection instanceof IStructuredSelection) {
+																						      List<AttachedDocObject> persons = DirDocEditAttachedDocModelProvider.INSTANCE.getPersons();
+																						      IStructuredSelection sel = (IStructuredSelection) selection;
 
-																				});
+																						      for (Iterator<AttachedDocObject> iterator = sel.iterator(); iterator.hasNext();) {
+																						        AttachedDocObject person = iterator.next();
+																						        String idString = person.getFirstName();
+																						        String revString = person.getLastName();
+																						        TCComponent removedAttachedDoc;
+																								try {
+																									removedAttachedDoc = FileManager.getDirDocRevision2(tcSession, idString, revString);
+																									  TCComponent dirDocRel = FileManager.getDirDocRevision(tcSession, editedDirDocLabel.getText());
+																								        dirDocRel.remove("AS2_AttachedDoc", removedAttachedDoc);
+																								        removedAttachedDoc.remove("AS2_guidingdocuments", dirDocRel);
+																								} catch (TCException e1) {
+																									// TODO Auto-generated catch block
+																									e1.printStackTrace();
+																								}
+
+																						        persons.remove(person);
+																						      }
+																						      editTableForAttachedDocuments.getViewer().refresh();
+																						    }
+																				}
+																			});
 																				FormData fd_removeButton = new FormData();
 																				fd_removeButton.top = new FormAttachment(addButton, 0, SWT.TOP);
 																				fd_removeButton.right = new FormAttachment(100, -10);
@@ -214,7 +287,7 @@ public class EditWindowSwt extends Shell {
 																								lblNewLabel.setLayoutData(fd_lblNewLabel);
 																								lblNewLabel.setText("\u041F\u0440\u0438\u043C\u0435\u043D\u044F\u0435\u043C\u043E\u0441\u0442\u044C");
 
-																										final Combo itemField = new Combo(composite1, SWT.NONE);
+
 																										itemField.setItems(new String[] {"MC-21", "ST-21"});
 																										FormData fd_itemField = new FormData();
 																										fd_itemField.left = new FormAttachment(composite_3, 6);
@@ -233,7 +306,12 @@ public class EditWindowSwt extends Shell {
 																														btnNewButton.addSelectionListener(new SelectionAdapter() {
 																															@Override
 																															public void widgetSelected(SelectionEvent e) {
-
+																																try {
+																																	TableManager.PasteColumn4(itemField.getText(), instanceField.getText(), editTableForEffectivity.getViewer());
+																																} catch (Exception e1) {
+																																	// TODO Auto-generated catch block
+																																	e1.printStackTrace();
+																																}
 																															}
 																														});
 																														FormData fd_btnNewButton = new FormData();
@@ -243,6 +321,24 @@ public class EditWindowSwt extends Shell {
 																														btnNewButton.setText("\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C");
 
 																																Button btnNewButton_1 = new Button(composite1, SWT.NONE);
+																																btnNewButton_1.addSelectionListener(new SelectionAdapter() {
+																																	@Override
+																																	public void widgetSelected(SelectionEvent e) {
+																																		ISelection selection = editTableForEffectivity.getViewer().getSelection();
+
+																																	    if (selection != null && selection instanceof IStructuredSelection) {
+																																	      List<EffectivityObject> persons = DirDocEditEffectivityModelProvider.INSTANCE.getPersons();
+																																	      IStructuredSelection sel = (IStructuredSelection) selection;
+
+																																	      for (Iterator<EffectivityObject> iterator = sel.iterator(); iterator.hasNext();) {
+																																	    	  EffectivityObject person = iterator.next();
+																																	        persons.remove(person);
+																																	      }
+																																	      editTableForEffectivity.getViewer().refresh();
+																																	    }
+
+																																	}
+																																});
 																																fd_btnNewButton.right = new FormAttachment(btnNewButton_1, -6);
 																																fd_btnNewButton.bottom = new FormAttachment(btnNewButton_1, 0, SWT.BOTTOM);
 																																FormData fd_btnNewButton_1 = new FormData();
@@ -266,7 +362,7 @@ public class EditWindowSwt extends Shell {
 
 																																Button btnNewButton_3 = new Button(composite_4, SWT.NONE);
 																																btnNewButton_3.setBounds(315, 3, 219, 25);
-																																btnNewButton_3.setText("\u041E\u0442\u043C\u0435\u043D\u0430");
+																																btnNewButton_3.setText("\u0412\u044B\u0445\u043E\u0434");
 
 		final TableForAttachedDocuments tableForAttachedDocuments	= new  TableForAttachedDocuments();
 		final TableForEffectivity tableForEffectivity =new  TableForEffectivity();

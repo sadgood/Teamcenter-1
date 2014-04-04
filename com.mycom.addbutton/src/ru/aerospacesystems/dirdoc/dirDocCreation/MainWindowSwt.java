@@ -137,7 +137,7 @@ public class MainWindowSwt extends Shell {
 		Button okButton = new Button(ButtonComposite, SWT.NONE);
 
 		okButton.setBounds(10, 10, 186, 100);
-		okButton.setText("\u041E\u041A");
+		okButton.setText("\u0421\u043E\u0437\u0434\u0430\u0442\u044C \u0414\u0414");
 
 		Button cancelButton = new Button(ButtonComposite, SWT.NONE);
 		cancelButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false));
@@ -150,7 +150,7 @@ public class MainWindowSwt extends Shell {
 			}
 		});
 		cancelButton.setBounds(10, 116, 186, 45);
-		cancelButton.setText("\u041E\u0442\u043C\u0435\u043D\u0430");
+		cancelButton.setText("\u0412\u044B\u0445\u043E\u0434");
 
 		Composite radioButtonComposite = new Composite(composite, SWT.BORDER);
 		FormData fd_radioButtonComposite = new FormData();
@@ -300,6 +300,14 @@ public class MainWindowSwt extends Shell {
 		tableForAttachedDocuments.createPartControl(composite_2);
 		final TableForEffectivity tableForEffectivity =new  TableForEffectivity();
 		tableForEffectivity.createPartControl(composite_3);
+		try {
+			TableManager.ClearEnum1(tableForAttachedDocuments.getViewer());
+			TableManager.ClearEnum2(tableForEffectivity.getViewer());
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		
 		Button addButton = new Button(composite1, SWT.NONE);
 		fd_composite_2.bottom = new FormAttachment(addButton, -6);
 		addButton.addSelectionListener(new SelectionAdapter() {
@@ -444,6 +452,23 @@ public class MainWindowSwt extends Shell {
 		btnNewButton.setText("\u0414\u043E\u0431\u0430\u0432\u0438\u0442\u044C");
 
 		Button btnNewButton_1 = new Button(composite1, SWT.NONE);
+		btnNewButton_1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				ISelection selection = tableForEffectivity.getViewer().getSelection();
+
+			    if (selection != null && selection instanceof IStructuredSelection) {
+			      List<EffectivityObject> persons = DirDocCreatModelProvider2.INSTANCE.getPersons();
+			      IStructuredSelection sel = (IStructuredSelection) selection;
+
+			      for (Iterator<EffectivityObject> iterator = sel.iterator(); iterator.hasNext();) {
+			    	  EffectivityObject person = iterator.next();
+			        persons.remove(person);
+			      }
+			      tableForAttachedDocuments.getViewer().refresh();
+			    }
+			}
+		});
 		fd_btnNewButton.right = new FormAttachment(btnNewButton_1, -6);
 		FormData fd_btnNewButton_1 = new FormData();
 		fd_btnNewButton_1.bottom = new FormAttachment(composite_2, -6);

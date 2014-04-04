@@ -2,6 +2,8 @@ package ru.aerospacesystems.dirdoc.handlers;
 
 import org.eclipse.jface.viewers.TableViewer;
 
+import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.EditTableForEffectivity;
+
 
 
 public class TableManager {
@@ -15,24 +17,77 @@ public class TableManager {
 			persons.getPersons().add(obj);
 			viewer.refresh();
 		 }
-	 
+
 	 public static void PasteColumn2 (String item ,String instance, TableViewer viewer) throws Exception {
 		EffectivityObject obj = new EffectivityObject();
 		 DirDocCreatModelProvider2 persons2 = DirDocCreatModelProvider2.INSTANCE;
 			obj.setFirstName(item);
 			obj.setLastName(instance);
-			
+
 			persons2.getPersons().add(obj);
 			viewer.refresh();
 		 }
 
+	 public static void ClearEnum1(TableViewer viewer) throws Exception {
+		 AttachedDocObject obj = new AttachedDocObject();
+		 DirDocCreatModelProvider persons =   DirDocCreatModelProvider.INSTANCE;
+
+			persons.getPersons().clear();
+			viewer.refresh();
+		 }
+
+
+
+	 public static void ClearEnum3(TableViewer viewer) throws Exception {
+		 AttachedDocObject obj = new AttachedDocObject();
+		 DirDocEditAttachedDocModelProvider persons =  DirDocEditAttachedDocModelProvider.INSTANCE;
+
+			persons.getPersons().clear();
+			viewer.refresh();
+		 }
+
+	 public static void ClearEnum4(TableViewer viewer) throws Exception {
+		 EffectivityObject obj = new EffectivityObject();
+		 DirDocEditEffectivityModelProvider persons = DirDocEditEffectivityModelProvider.INSTANCE;
+
+			persons.getPersons().clear();
+			viewer.refresh();
+		 }
+
+	 public static void ClearEnum2(TableViewer viewer) throws Exception {
+		 AttachedDocObject obj = new AttachedDocObject();
+		 DirDocCreatModelProvider2 persons =  DirDocCreatModelProvider2.INSTANCE;
+
+			persons.getPersons().clear();
+			viewer.refresh();
+		 }
+	 public static void PasteColumn3 (String identifier ,String revision, String status, TableViewer viewer) throws Exception {
+		 AttachedDocObject obj = new AttachedDocObject();
+		 DirDocEditAttachedDocModelProvider persons =  DirDocEditAttachedDocModelProvider.INSTANCE;
+			obj.setFirstName(identifier);
+			obj.setLastName(revision);
+			obj.setGender(status);
+			persons.getPersons().add(obj);
+			viewer.refresh();
+		 }
+
+	 public static void PasteColumn4 (String item ,String instance, TableViewer viewer) throws Exception {
+			EffectivityObject obj = new EffectivityObject();
+			 DirDocEditEffectivityModelProvider persons = DirDocEditEffectivityModelProvider.INSTANCE;
+				obj.setFirstName(item);
+				obj.setLastName(instance);
+
+				persons.getPersons().add(obj);
+				viewer.refresh();
+			 }
+
 	 public static boolean checkClone(String identifier, String revision) {
 		 DirDocCreatModelProvider persons = DirDocCreatModelProvider.INSTANCE;
-		
+
 		 boolean result = true;
 		 for (int i=0; i < persons.ModelProviderSize(); i++)
 		 {
-			 
+
 				try {
 					String id = TableManager.getColumn(i).getFirstName();
 					String rev = TableManager.getColumn(i).getLastName();
@@ -40,20 +95,20 @@ public class TableManager {
 					if ( id.equals(identifier) & rev.equals(revision) )
 					{
 					result = true;
-						
+
 					}
-					else 
+					else
 					{
-						result = false;	
+						result = false;
 					}
 				} catch (Exception e) {
-				
-					
-					
+
+
+
 					e.printStackTrace();
 				}
-				
-		
+
+
 
 		 }
 		return result;
@@ -66,7 +121,7 @@ public class TableManager {
 		return	persons.getPersons().get(number);
 
 		 }
-	 
+
 	 public static EffectivityObject getColumn2 (int number) throws Exception {
 
 		 DirDocCreatModelProvider2 persons = DirDocCreatModelProvider2.INSTANCE;
@@ -75,6 +130,21 @@ public class TableManager {
 
 		 }
 
+	 public static AttachedDocObject getColumn3 (int number) throws Exception {
+
+		 DirDocEditAttachedDocModelProvider persons = DirDocEditAttachedDocModelProvider.INSTANCE;
+
+		return	persons.getPersons().get(number);
+
+		 }
+	 
+	 public static EffectivityObject getColumn4 (int number) throws Exception {
+
+		 DirDocEditEffectivityModelProvider persons = DirDocEditEffectivityModelProvider.INSTANCE;
+
+		return	persons.getPersons().get(number);
+
+		 }
 
 
 }

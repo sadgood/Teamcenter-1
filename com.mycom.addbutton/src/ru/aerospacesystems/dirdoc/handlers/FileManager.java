@@ -34,13 +34,21 @@ public class FileManager {
 	     int numberOfOjects = pasteTargets.length;
 		 String[][] objects = new String[numberOfOjects][3];
 
-		 for (int i=0; i < numberOfOjects; i++)
+		 for (int i = 0; i < numberOfOjects; i++)
 		 {
+
 			 objects[i][1] = pasteTargets[i].toString();
 			 String[] parts = objects[i][1].split("/");
-			 objects[i][1]  = parts[0];
-			 parts = parts[1].split(";");
+			 System.out.println("DLNA MASSIVA " + parts.length);
+			 objects[i][1] = parts[0];
+			 for (int i2 = 1; i2 < parts.length - 1 ; i2++){
+				 objects[i][1] +="/" + parts[i2];
+			 }
+
+
+			 parts = parts[parts.length - 1].split(";");
 			 objects[i][2]  = parts[0];
+
 		 }
 
         return objects;
@@ -49,9 +57,9 @@ public class FileManager {
 	 public static String getDirDocIdFromObjectString(String objectString){
 		 String[] id = objectString.split("/");
 		return id[0];
-		 
+
 	 }
-	 
+
 	 public static TCComponent[] getRelated (TCComponent dirDocRev) throws TCException {
 
 			TCComponent[] related = dirDocRev.getRelatedComponents("AS2_AttachedDoc");
@@ -61,7 +69,7 @@ public class FileManager {
 
 	  }
 
-   
+
 
 
 
