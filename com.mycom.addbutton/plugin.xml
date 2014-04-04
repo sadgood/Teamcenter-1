@@ -31,6 +31,44 @@
       </key>
    </extension>
 
+<extension point="org.eclipse.ui.commands">
+<command
+name="Корректировка"
+id="ru.aerospacesystems.dirdoc.commands.dirDocCommand2">
+</command>
+</extension>
+<extension point="org.eclipse.ui.handlers">
+<handler
+commandId="ru.aerospacesystems.dirdoc.commands.dirDocCommand2"
+class="ru.aerospacesystems.dirdoc.handlers.DirDocEditHandler">
+</handler>
+</extension>
+<extension point="org.eclipse.ui.menus">
+<menuContribution
+locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+<command
+commandId="ru.aerospacesystems.dirdoc.commands.dirDocCommand2"
+mnemonic="S"
+icon="icons/dirDoc.gif"
+id="ru.aerospacesystems.dirdoc.commands.dirDocCommand2">
+<visibleWhen>
+<reference
+definitionId="com.teamcenter.rac.ui.inMainPerspective">
+</reference>
+</visibleWhen>
+</command>
+</menuContribution>
+</extension>
+
+
+
+
+<extension point="com.teamcenter.rac.util.tc_properties">
+   <plugin_properties pluginName="ru.aerospacesystems.dirdoc"/>
+</extension>
+    <extension point="com.teamcenter.rac.aifrcp.ActionSetAIFApplicationAssociation">
+</extension>
+
    <extension
          point="org.eclipse.ui.menus">
 
@@ -47,5 +85,8 @@
          </toolbar>
       </menuContribution>
    </extension>
-z
+   <extension
+         point="com.teamcenter.rac.util.tc_properties">
+   </extension>
+
 </plugin>
