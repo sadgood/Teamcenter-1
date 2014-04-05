@@ -307,7 +307,7 @@ public class MainWindowSwt extends Shell {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		
+
 		Button addButton = new Button(composite1, SWT.NONE);
 		fd_composite_2.bottom = new FormAttachment(addButton, -6);
 		addButton.addSelectionListener(new SelectionAdapter() {
@@ -543,8 +543,9 @@ public class MainWindowSwt extends Shell {
 													GuiManager.infoMessage("Успешное создания директивного документа", "Служебная записка № " + dirDocIdTextField.getControl().getText() + " успешно создана", getShell());
                                                     String effectivityString = new String();
 
-													for (int i=0; i < persons2.ModelProviderSize(); i++){
-														effectivityString = effectivityString + "//" + TableManager.getColumn2(i).toString();
+                                                    effectivityString =  TableManager.getColumn2(0).getFirstName()+ "#" + TableManager.getColumn2(0).getLastName();
+													for (int i=1; i < persons2.ModelProviderSize(); i++){
+														effectivityString = effectivityString + "/" + TableManager.getColumn2(i).getFirstName()+ "#" + TableManager.getColumn2(i).getLastName();
 													}
 
 														dirDocRevision.setStringProperty("gov_classification", effectivityString);

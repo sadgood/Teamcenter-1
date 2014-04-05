@@ -211,6 +211,16 @@ public class EditWindowSwt extends Shell {
 																		}
 
 
+																	String effectivityString = dirDocRel.getStringProperty("gov_classification");
+																	String[] rowEffectivityArray = effectivityString.split("/");
+																	for (int i = 0; i < rowEffectivityArray.length; i++){
+																		String[] cellEffectivityMassive = rowEffectivityArray[i].split("#");
+																		TableManager.PasteColumn4(cellEffectivityMassive[0], cellEffectivityMassive[1], editTableForEffectivity.getViewer());
+
+																	}
+
+
+
 																} catch (Exception e1) {
 																	// TODO Auto-generated catch block
 																	e1.printStackTrace();
@@ -226,9 +236,64 @@ public class EditWindowSwt extends Shell {
 																		addButton.addSelectionListener(new SelectionAdapter() {
 																			@Override
 																			public void widgetSelected(SelectionEvent e) {
+																				String[][] selectedForTable = FileManager.getSelectedObject();
+																				boolean isCloneExist = false;
+																				try {
 
 
-																			}  });
+																					for (int i=0; i < selectedForTable.length; i++){
+																						 DirDocEditAttachedDocModelProvider persons = DirDocEditAttachedDocModelProvider.INSTANCE;
+																						 System.out.println("Dlina "+ persons.ModelProviderSize());
+
+
+
+																						 for (int i2=0; i2 < persons.ModelProviderSize(); i2++){
+																							 String id = TableManager.getColumn(i2).getFirstName();
+																							 String rev = TableManager.getColumn(i2).getLastName();
+																							 String ID = selectedForTable[i][1];
+																							 String REV = selectedForTable[i][2];
+
+
+
+
+																							 if (id.equals(ID) & rev.equals(REV)){
+																								 System.out.println("True");
+																									isCloneExist = true;
+																								break;
+																				}
+																							 else if (!id.equals(ID) || !rev.equals(REV))
+																							 {
+																								 System.out.println("False");
+																								 isCloneExist = false;
+																							 }
+																							 }
+
+																		          if ( isCloneExist == false){
+																					TableManager.PasteColumn3(selectedForTable[i][1],selectedForTable[i][2],"Отсутствует",editTableForAttachedDocuments.getViewer());
+																					TCComponent addAttachedDoc = FileManager.getDirDocRevision2(tcSession, selectedForTable[i][1], selectedForTable[i][2]);
+																					  TCComponent dirDocRel = FileManager.getDirDocRevision(tcSession, editedDirDocLabel.getText());
+																				        dirDocRel.add("AS2_AttachedDoc", addAttachedDoc);
+																				        addAttachedDoc.add("AS2_guidingdocuments", dirDocRel);
+																		          }
+																					}
+																					}
+
+
+
+
+
+																				 catch (Exception e1) {
+																					// TODO Auto-generated catch block
+																					e1.printStackTrace();
+																				}
+
+
+
+
+
+																					        }
+
+																					    });
 																		FormData fd_addButton = new FormData();
 																		fd_addButton.right = new FormAttachment(100, -305);
 																		fd_addButton.left = new FormAttachment(0, 10);
@@ -332,8 +397,27 @@ public class EditWindowSwt extends Shell {
 
 																																	      for (Iterator<EffectivityObject> iterator = sel.iterator(); iterator.hasNext();) {
 																																	    	  EffectivityObject person = iterator.next();
+																																	    	  TCComponent dirDocRel;
+																																			try {
+																																				dirDocRel = FileManager.getDirDocRevision(tcSession, editedDirDocLabel.getText());
+																																				String effectivityStringFromPoperty = dirDocRel.getStringProperty("gov_classification");
+																																		    	 dirDocRel.setStringProperty("gov_classification", effectivityStringFromPoperty.replace(person.getFirstName()+"#"+person.getLastName()+"/","") );
+																																		    	 dirDocRel.setStringProperty("gov_classification", effectivityStringFromPoperty.replace(person.getFirstName()+"#"+person.getLastName(),"") );
+																																		    	 effectivityStringFromPoperty = dirDocRel.getStringProperty("gov_classification");
+																																		    	 if (effectivityStringFromPoperty.length() < 4){
+																																		    		 dirDocRel.setStringProperty("gov_classification", effectivityStringFromPoperty.replace("/","") );
+																																		    	 }
+																																			
+																																	   
+																																			} catch (TCException e1) {
+																																				// TODO Auto-generated catch block
+																																				e1.printStackTrace();
+																																			}
+
 																																	        persons.remove(person);
 																																	      }
+
+
 																																	      editTableForEffectivity.getViewer().refresh();
 																																	    }
 
