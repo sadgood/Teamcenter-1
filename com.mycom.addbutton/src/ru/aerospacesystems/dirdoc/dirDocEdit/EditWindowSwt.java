@@ -248,8 +248,9 @@ public class EditWindowSwt extends Shell {
 
 
 																						 for (int i2=0; i2 < persons.ModelProviderSize(); i2++){
-																							 String id = TableManager.getColumn(i2).getFirstName();
-																							 String rev = TableManager.getColumn(i2).getLastName();
+																							 System.out.println("Razmer = " + persons.ModelProviderSize() + "  Index = " + i2);
+																							 String id = TableManager.getColumn3(i2).getFirstName();
+																							 String rev = TableManager.getColumn3(i2).getLastName();
 																							 String ID = selectedForTable[i][1];
 																							 String REV = selectedForTable[i][2];
 
@@ -372,10 +373,28 @@ public class EditWindowSwt extends Shell {
 																															@Override
 																															public void widgetSelected(SelectionEvent e) {
 																																try {
+																																	 DirDocEditEffectivityModelProvider effPersons = DirDocEditEffectivityModelProvider.INSTANCE;
+																																	
 																																	TableManager.PasteColumn4(itemField.getText(), instanceField.getText(), editTableForEffectivity.getViewer());
+																																	TCComponent dirDocRevision = FileManager.getDirDocRevision(tcSession, editedDirDocLabel.getText());
+///////////////////////////
+																																	
+																														             String effectivityString = new String();
+																				                                                      
+																					                                                    if (effPersons.ModelProviderSize() != 0 ){
+																					                                                    
+																					                                                    effectivityString =  TableManager.getColumn4(0).getFirstName()+ "#" + TableManager.getColumn4(0).getLastName();
+																					                                                    }
+																																		for (int i=1; i < effPersons.ModelProviderSize(); i++){
+																																			effectivityString = effectivityString + "/" + TableManager.getColumn4(i).getFirstName()+ "#" + TableManager.getColumn4(i).getLastName();
+																																		}
+
+																																			dirDocRevision.setStringProperty("gov_classification", effectivityString);
+
 																																} catch (Exception e1) {
-																																	// TODO Auto-generated catch block
 																																	e1.printStackTrace();
+																																	
+																																	
 																																}
 																															}
 																														});
@@ -407,8 +426,8 @@ public class EditWindowSwt extends Shell {
 																																		    	 if (effectivityStringFromPoperty.length() < 4){
 																																		    		 dirDocRel.setStringProperty("gov_classification", effectivityStringFromPoperty.replace("/","") );
 																																		    	 }
-																																			
-																																	   
+
+
 																																			} catch (TCException e1) {
 																																				// TODO Auto-generated catch block
 																																				e1.printStackTrace();

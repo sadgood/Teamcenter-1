@@ -2,6 +2,7 @@ package ru.aerospacesystems.dirdoc.handlers;
 
 import org.eclipse.jface.viewers.TableViewer;
 
+import ru.aerospacesystems.dirdoc.dirDocCreation.MainWindowSwt;
 import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.EditTableForEffectivity;
 
 
@@ -92,7 +93,7 @@ public class TableManager {
 					String id = TableManager.getColumn(i).getFirstName();
 					String rev = TableManager.getColumn(i).getLastName();
 
-					if ( id.equals(identifier) & rev.equals(revision) )
+					if ( id.equals(identifier) && rev.equals(revision) )
 					{
 					result = true;
 
@@ -117,6 +118,12 @@ public class TableManager {
 	 public static AttachedDocObject getColumn (int number) throws Exception {
 
 		 DirDocCreatModelProvider persons = DirDocCreatModelProvider.INSTANCE;
+		 
+		 int sizeOfTableArray = DirDocCreatModelProvider.INSTANCE.ModelProviderSize();
+		 if (number > sizeOfTableArray){
+			 System.out.println("!!!!!getColumn!!!!!!" + "Размер массива данных таьлицы = " + sizeOfTableArray + " Обращение к номеру = " +number);
+			 
+		 }
 
 		return	persons.getPersons().get(number);
 
@@ -125,6 +132,11 @@ public class TableManager {
 	 public static EffectivityObject getColumn2 (int number) throws Exception {
 
 		 DirDocCreatModelProvider2 persons = DirDocCreatModelProvider2.INSTANCE;
+		 int sizeOfTableArray = DirDocCreatModelProvider2.INSTANCE.ModelProviderSize();
+		 if (number > sizeOfTableArray){
+			 System.out.println("!!!!!getColumn2!!!!!!" + "Размер массива данных таьлицы = " + sizeOfTableArray + " Обращение к номеру = " +number);
+			 
+		 } 
 
 		return	persons.getPersons().get(number);
 
@@ -133,14 +145,28 @@ public class TableManager {
 	 public static AttachedDocObject getColumn3 (int number) throws Exception {
 
 		 DirDocEditAttachedDocModelProvider persons = DirDocEditAttachedDocModelProvider.INSTANCE;
+		 
+		 int sizeOfTableArray = DirDocEditAttachedDocModelProvider.INSTANCE.ModelProviderSize();
+		 if (number > sizeOfTableArray){
+			 System.out.println("!!!!!getColumn3!!!!!!" + "Размер массива данных таьлицы = " + sizeOfTableArray + " Обращение к номеру = " +number);
+			 
+		 } 
 
 		return	persons.getPersons().get(number);
 
 		 }
 	 
 	 public static EffectivityObject getColumn4 (int number) throws Exception {
+		 
+		 
 
 		 DirDocEditEffectivityModelProvider persons = DirDocEditEffectivityModelProvider.INSTANCE;
+		 
+		 int sizeOfTableArray = DirDocEditEffectivityModelProvider.INSTANCE.ModelProviderSize();
+		 if (number > sizeOfTableArray){
+			 System.out.println("!!!!!getColumn4!!!!!!" + "Размер массива данных таьлицы = " + sizeOfTableArray + " Обращение к номеру = " +number);
+			 
+		 } 
 
 		return	persons.getPersons().get(number);
 

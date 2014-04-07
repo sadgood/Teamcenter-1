@@ -542,21 +542,23 @@ public class MainWindowSwt extends Shell {
 													dirDocRevision .add("IMAN_specification",FileManager.getDirDocDataset(tcSession, dirDocIdTextField.getControl().getText(), "MSWORD") );
 													GuiManager.infoMessage("Успешное создания директивного документа", "Служебная записка № " + dirDocIdTextField.getControl().getText() + " успешно создана", getShell());
                                                     String effectivityString = new String();
-
+                                                      
+                                                    if (persons2.ModelProviderSize() != 0 ){
+                                                    
                                                     effectivityString =  TableManager.getColumn2(0).getFirstName()+ "#" + TableManager.getColumn2(0).getLastName();
+                                                    }
 													for (int i=1; i < persons2.ModelProviderSize(); i++){
 														effectivityString = effectivityString + "/" + TableManager.getColumn2(i).getFirstName()+ "#" + TableManager.getColumn2(i).getLastName();
 													}
 
 														dirDocRevision.setStringProperty("gov_classification", effectivityString);
 
-
-					/////////////////////////////////
 											} catch (Exception e1) {
 
 
 												try {
 													GuiManager.errorMessage("Ошибка создания директивного документа", e1.toString(), getShell());
+													e1.printStackTrace();
 												} catch (Exception e3) {
 
 												}
