@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import ru.aerospacesystems.dirdoc.handlers.DirDocEditEffectivityModelProvider;
 import ru.aerospacesystems.dirdoc.handlers.EffectivityObject;
 import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider2;
-import ru.aerospacesystems.dirdoc.handlers.tableHandlers.MainTableControl;
+import ru.aerospacesystems.dirdoc.handlers.table.MainTableControl;
 
 public class EditTableForEffectivity  {
 	protected static TableViewer viewer;

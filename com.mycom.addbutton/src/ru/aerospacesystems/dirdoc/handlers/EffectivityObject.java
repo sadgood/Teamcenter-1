@@ -54,11 +54,7 @@ public class EffectivityObject {
 
 
 
-
-
-
-
-  @Override
+ @Override
   public String toString() {
     return item + " " + instantces;
   }

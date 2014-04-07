@@ -1,4 +1,4 @@
-package ru.aerospacesystems.dirdoc.handlers.tableHandlers;
+package ru.aerospacesystems.dirdoc.handlers.table;
 
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;

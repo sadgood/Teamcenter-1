@@ -1,4 +1,7 @@
-package ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput;
+package ru.aerospacesystems.dirdoc.handlers.table;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -12,17 +15,21 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import ru.aerospacesystems.dirdoc.handlers.AttachedDocObject;
-import ru.aerospacesystems.dirdoc.handlers.DirDocEditAttachedDocModelProvider;
-import ru.aerospacesystems.dirdoc.handlers.EffectivityObject;
 import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider;
-import ru.aerospacesystems.dirdoc.handlers.table.MainTableControl;
+import ru.aerospacesystems.dirdoc.handlers.EffectivityObject;
 
-public class EditTableForAttachedDocuments  {
+
+
+public abstract class MainTableControl implements ITableControl {
+
+
 
 	protected static TableViewer viewer;
+	
+	
 
 
-
+	
 	protected void createViewer(Composite parent) {
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
 		        | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
@@ -35,7 +42,7 @@ public class EditTableForAttachedDocuments  {
 		    viewer.setContentProvider(new ArrayContentProvider());
 		    // get the content for the viewer, setInput will call getElements in the
 		    // contentProvider
-		    viewer.setInput(DirDocEditAttachedDocModelProvider.INSTANCE.getPersons());
+		    viewer.setInput(modelDataProvider.INSTANCE.getPersons());
 		    // make the selection available to other views
 		    //getSite().setSelectionProvider(viewer);
 		    // set the sorter for the table
@@ -63,7 +70,7 @@ public class EditTableForAttachedDocuments  {
 	    col.setLabelProvider(new ColumnLabelProvider() {
 	      @Override
 	      public String getText(Object element) {
-	    	  AttachedDocObject p = (AttachedDocObject) element;
+	    	  DataModelObject p = (DataModelObject) element;
 	        return p.getFirstName();
 	      }
 	    });
@@ -73,7 +80,7 @@ public class EditTableForAttachedDocuments  {
 	    col.setLabelProvider(new ColumnLabelProvider() {
 	      @Override
 	      public String getText(Object element) {
-	    	  AttachedDocObject p = (AttachedDocObject) element;
+	    	  DataModelObject p = (DataModelObject) element;
 	        return p.getLastName();
 	      }
 	    });
@@ -102,4 +109,34 @@ public class EditTableForAttachedDocuments  {
 		public TableViewer getViewer(){
 			return viewer;
 		 }
+
+		public enum modelDataProvider {
+			  INSTANCE;
+
+			  public List<DataModelObject> persons;
+
+			  modelDataProvider() {
+			    persons = new ArrayList<DataModelObject>();
+			    // Image here some fancy database access to read the persons and to
+			    // put them into the model
+
+			  }
+
+			  public int ModelProviderSize() {
+				return persons.size();
+
+				  }
+			  public List<DataModelObject> getPersons() {
+			    return persons;
+			  }
+
+			}
+		
+	 abstract class DataModelObject {
+
+		abstract String getFirstName();
+
+		abstract String getLastName();};
+
+
 }

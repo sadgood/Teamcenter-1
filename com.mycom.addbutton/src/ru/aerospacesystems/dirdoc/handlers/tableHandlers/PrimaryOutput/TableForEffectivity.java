@@ -13,15 +13,19 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import ru.aerospacesystems.dirdoc.handlers.EffectivityObject;
 import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider2;
-import ru.aerospacesystems.dirdoc.handlers.tableHandlers.MainTableControl;
+import ru.aerospacesystems.dirdoc.handlers.table.MainTableControl;
 
 public class TableForEffectivity  {
-	protected static TableViewer viewer;
-	
-	
-	
 
-	
+
+	protected static TableViewer viewer;
+
+
+
+
+
+
+
 	protected
 	void createViewer(Composite parent) {
 		 viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
@@ -33,9 +37,9 @@ public class TableForEffectivity  {
 			    table.setLinesVisible(true);
 
 			    viewer.setContentProvider(new ArrayContentProvider());
-			
+
 			    viewer.setInput(DirDocCreatModelProvider2.INSTANCE.getPersons());
-			
+
 			    GridData gridData = new GridData();
 			    gridData.verticalAlignment = GridData.FILL;
 			    gridData.horizontalSpan = 2;
@@ -43,7 +47,7 @@ public class TableForEffectivity  {
 			    gridData.grabExcessVerticalSpace = true;
 			    gridData.horizontalAlignment = GridData.FILL;
 			    viewer.getControl().setLayoutData(gridData);
-		
+
 	}
 
 
@@ -71,15 +75,15 @@ public class TableForEffectivity  {
 	        return p2.getLastName();
 	      }
 	    });
-	    
-	    
 
-	  
 
-		
+
+
+
+
 	}
 	public void viewerRefresh() {
-	 viewer.refresh();	
+	 viewer.refresh();
     };
 
     public  void createPartControl(Composite parent){
@@ -87,9 +91,9 @@ public class TableForEffectivity  {
 		    parent.setLayout(layout);
 		    createViewer(parent);
 	};
-	
 
-	 
+
+
 	 protected TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber){
 		   final TableViewerColumn viewerColumn = new TableViewerColumn(viewer,   SWT.NONE);
 			    final TableColumn column = viewerColumn.getColumn();
@@ -98,9 +102,9 @@ public class TableForEffectivity  {
 			    column.setResizable(true);
 			    column.setMoveable(true);
 			    return viewerColumn;
-		 
+
 	 }
-	 
+
 	public TableViewer getViewer(){
 		return viewer;
 	 }

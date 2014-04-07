@@ -58,6 +58,7 @@ import ru.aerospacesystems.dirdoc.handlers.SwitchButton;
 import ru.aerospacesystems.dirdoc.handlers.TableManager;
 import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.TableForAttachedDocuments;
 import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.TableForEffectivity;
+import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.TestTable;
 
 import com.teamcenter.rac.aif.AIFDesktop;
 import com.teamcenter.rac.aif.kernel.InterfaceAIFComponent;
@@ -298,6 +299,8 @@ public class MainWindowSwt extends Shell {
 
 		final TableForAttachedDocuments tableForAttachedDocuments	= new  TableForAttachedDocuments();
 		tableForAttachedDocuments.createPartControl(composite_2);
+		
+		
 		final TableForEffectivity tableForEffectivity =new  TableForEffectivity();
 		tableForEffectivity.createPartControl(composite_3);
 		try {
