@@ -5,6 +5,8 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -12,7 +14,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import ru.aerospacesystems.dirdoc.handlers.EffectivityObject;
-import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider2;
+import ru.aerospacesystems.dirdoc.handlers.DirDocCreatEffectivityModelProvider;
 import ru.aerospacesystems.dirdoc.handlers.table.MainTableControl;
 
 public class TableForEffectivity  {
@@ -35,10 +37,13 @@ public class TableForEffectivity  {
 			    final Table table = viewer.getTable();
 			    table.setHeaderVisible(true);
 			    table.setLinesVisible(true);
-
+			    
+		
+			    
+			    
 			    viewer.setContentProvider(new ArrayContentProvider());
 
-			    viewer.setInput(DirDocCreatModelProvider2.INSTANCE.getPersons());
+			    viewer.setInput(DirDocCreatEffectivityModelProvider.INSTANCE.getPersons());
 
 			    GridData gridData = new GridData();
 			    gridData.verticalAlignment = GridData.FILL;
@@ -62,7 +67,7 @@ public class TableForEffectivity  {
 	      @Override
 	      public String getText(Object element) {
 	        EffectivityObject p = (EffectivityObject) element;
-	        return p.getFirstName();
+	        return p.getItem();
 	      }
 	    });
 
@@ -72,7 +77,7 @@ public class TableForEffectivity  {
 	      @Override
 	      public String getText(Object element) {
 	    	  EffectivityObject p2 = (EffectivityObject) element;
-	        return p2.getLastName();
+	        return p2.getInstantces();
 	      }
 	    });
 

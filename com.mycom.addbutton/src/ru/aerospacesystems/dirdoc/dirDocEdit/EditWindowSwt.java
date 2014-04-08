@@ -54,8 +54,8 @@ import ru.aerospacesystems.dirdoc.handlers.EffectivityObject;
 import ru.aerospacesystems.dirdoc.handlers.FileManager;
 import ru.aerospacesystems.dirdoc.handlers.GuiManager;
 import ru.aerospacesystems.dirdoc.handlers.AttachedDocObject;
-import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider;
-import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider2;
+import ru.aerospacesystems.dirdoc.handlers.DirDocCreatAttachedDocModelProvider;
+import ru.aerospacesystems.dirdoc.handlers.DirDocCreatEffectivityModelProvider;
 import ru.aerospacesystems.dirdoc.handlers.SwitchButton;
 import ru.aerospacesystems.dirdoc.handlers.TableManager;
 import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.EditTableForAttachedDocuments;
@@ -249,8 +249,8 @@ public class EditWindowSwt extends Shell {
 
 																						 for (int i2=0; i2 < persons.ModelProviderSize(); i2++){
 																							 System.out.println("Razmer = " + persons.ModelProviderSize() + "  Index = " + i2);
-																							 String id = TableManager.getColumn3(i2).getFirstName();
-																							 String rev = TableManager.getColumn3(i2).getLastName();
+																							 String id = TableManager.getColumn3(i2).getIdentifier();
+																							 String rev = TableManager.getColumn3(i2).getRevision();
 																							 String ID = selectedForTable[i][1];
 																							 String REV = selectedForTable[i][2];
 
@@ -314,8 +314,8 @@ public class EditWindowSwt extends Shell {
 
 																						      for (Iterator<AttachedDocObject> iterator = sel.iterator(); iterator.hasNext();) {
 																						        AttachedDocObject person = iterator.next();
-																						        String idString = person.getFirstName();
-																						        String revString = person.getLastName();
+																						        String idString = person.getIdentifier();
+																						        String revString = person.getRevision();
 																						        TCComponent removedAttachedDoc;
 																								try {
 																									removedAttachedDoc = FileManager.getDirDocRevision2(tcSession, idString, revString);
@@ -383,10 +383,10 @@ public class EditWindowSwt extends Shell {
 																				                                                      
 																					                                                    if (effPersons.ModelProviderSize() != 0 ){
 																					                                                    
-																					                                                    effectivityString =  TableManager.getColumn4(0).getFirstName()+ "#" + TableManager.getColumn4(0).getLastName();
+																					                                                    effectivityString =  TableManager.getColumn4(0).getItem()+ "#" + TableManager.getColumn4(0).getInstantces();
 																					                                                    }
 																																		for (int i=1; i < effPersons.ModelProviderSize(); i++){
-																																			effectivityString = effectivityString + "/" + TableManager.getColumn4(i).getFirstName()+ "#" + TableManager.getColumn4(i).getLastName();
+																																			effectivityString = effectivityString + "/" + TableManager.getColumn4(i).getItem()+ "#" + TableManager.getColumn4(i).getInstantces();
 																																		}
 
 																																			dirDocRevision.setStringProperty("gov_classification", effectivityString);
@@ -420,8 +420,8 @@ public class EditWindowSwt extends Shell {
 																																			try {
 																																				dirDocRel = FileManager.getDirDocRevision(tcSession, editedDirDocLabel.getText());
 																																				String effectivityStringFromPoperty = dirDocRel.getStringProperty("gov_classification");
-																																		    	 dirDocRel.setStringProperty("gov_classification", effectivityStringFromPoperty.replace(person.getFirstName()+"#"+person.getLastName()+"/","") );
-																																		    	 dirDocRel.setStringProperty("gov_classification", effectivityStringFromPoperty.replace(person.getFirstName()+"#"+person.getLastName(),"") );
+																																		    	 dirDocRel.setStringProperty("gov_classification", effectivityStringFromPoperty.replace(person.getItem()+"#"+person.getInstantces()+"/","") );
+																																		    	 dirDocRel.setStringProperty("gov_classification", effectivityStringFromPoperty.replace(person.getItem()+"#"+person.getInstantces(),"") );
 																																		    	 effectivityStringFromPoperty = dirDocRel.getStringProperty("gov_classification");
 																																		    	 if (effectivityStringFromPoperty.length() < 4){
 																																		    		 dirDocRel.setStringProperty("gov_classification", effectivityStringFromPoperty.replace("/","") );
@@ -466,9 +466,6 @@ public class EditWindowSwt extends Shell {
 																																Button btnNewButton_3 = new Button(composite_4, SWT.NONE);
 																																btnNewButton_3.setBounds(315, 3, 219, 25);
 																																btnNewButton_3.setText("\u0412\u044B\u0445\u043E\u0434");
-
-		final TableForAttachedDocuments tableForAttachedDocuments	= new  TableForAttachedDocuments();
-		final TableForEffectivity tableForEffectivity =new  TableForEffectivity();
 
 
 

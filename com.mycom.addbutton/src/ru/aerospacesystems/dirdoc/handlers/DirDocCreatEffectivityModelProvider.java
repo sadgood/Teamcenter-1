@@ -3,12 +3,12 @@ package ru.aerospacesystems.dirdoc.handlers;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum DirDocCreatModelProvider2 {
+public enum DirDocCreatEffectivityModelProvider {
   INSTANCE;
 
   public List<EffectivityObject> persons2;
 
-  DirDocCreatModelProvider2() {
+  DirDocCreatEffectivityModelProvider() {
     persons2 = new ArrayList<EffectivityObject>();
     // Image here some fancy database access to read the persons and to
     // put them into the model

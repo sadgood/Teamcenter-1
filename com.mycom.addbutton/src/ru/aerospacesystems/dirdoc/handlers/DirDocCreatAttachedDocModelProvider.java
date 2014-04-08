@@ -3,15 +3,14 @@ package ru.aerospacesystems.dirdoc.handlers;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum DirDocCreatModelProvider {
+public enum DirDocCreatAttachedDocModelProvider {
   INSTANCE;
 
   public List<AttachedDocObject> persons;
 
-  DirDocCreatModelProvider() {
+  DirDocCreatAttachedDocModelProvider() {
     persons = new ArrayList<AttachedDocObject>();
-    // Image here some fancy database access to read the persons and to
-    // put them into the model
+    
 
   }
 

@@ -11,19 +11,19 @@ public class TableManager {
 
 	 public static void PasteColumn (String identifier ,String revision, String status, TableViewer viewer) throws Exception {
 		 AttachedDocObject obj = new AttachedDocObject();
-		 DirDocCreatModelProvider persons = DirDocCreatModelProvider.INSTANCE;
-			obj.setFirstName(identifier);
-			obj.setLastName(revision);
-			obj.setGender(status);
+		 DirDocCreatAttachedDocModelProvider persons = DirDocCreatAttachedDocModelProvider.INSTANCE;
+			obj.setIdentifier(identifier);
+			obj.setRevision(revision);
+			obj.setStatus(status);
 			persons.getPersons().add(obj);
 			viewer.refresh();
 		 }
 
 	 public static void PasteColumn2 (String item ,String instance, TableViewer viewer) throws Exception {
 		EffectivityObject obj = new EffectivityObject();
-		 DirDocCreatModelProvider2 persons2 = DirDocCreatModelProvider2.INSTANCE;
-			obj.setFirstName(item);
-			obj.setLastName(instance);
+		 DirDocCreatEffectivityModelProvider persons2 = DirDocCreatEffectivityModelProvider.INSTANCE;
+			obj.setItem(item);
+			obj.setInstantces(instance);
 
 			persons2.getPersons().add(obj);
 			viewer.refresh();
@@ -31,7 +31,7 @@ public class TableManager {
 
 	 public static void ClearEnum1(TableViewer viewer) throws Exception {
 		 AttachedDocObject obj = new AttachedDocObject();
-		 DirDocCreatModelProvider persons =   DirDocCreatModelProvider.INSTANCE;
+		 DirDocCreatAttachedDocModelProvider persons =   DirDocCreatAttachedDocModelProvider.INSTANCE;
 
 			persons.getPersons().clear();
 			viewer.refresh();
@@ -57,7 +57,7 @@ public class TableManager {
 
 	 public static void ClearEnum2(TableViewer viewer) throws Exception {
 		 AttachedDocObject obj = new AttachedDocObject();
-		 DirDocCreatModelProvider2 persons =  DirDocCreatModelProvider2.INSTANCE;
+		 DirDocCreatEffectivityModelProvider persons =  DirDocCreatEffectivityModelProvider.INSTANCE;
 
 			persons.getPersons().clear();
 			viewer.refresh();
@@ -65,9 +65,9 @@ public class TableManager {
 	 public static void PasteColumn3 (String identifier ,String revision, String status, TableViewer viewer) throws Exception {
 		 AttachedDocObject obj = new AttachedDocObject();
 		 DirDocEditAttachedDocModelProvider persons =  DirDocEditAttachedDocModelProvider.INSTANCE;
-			obj.setFirstName(identifier);
-			obj.setLastName(revision);
-			obj.setGender(status);
+			obj.setIdentifier(identifier);
+			obj.setRevision(revision);
+			obj.setStatus(status);
 			persons.getPersons().add(obj);
 			viewer.refresh();
 		 }
@@ -75,23 +75,23 @@ public class TableManager {
 	 public static void PasteColumn4 (String item ,String instance, TableViewer viewer) throws Exception {
 			EffectivityObject obj = new EffectivityObject();
 			 DirDocEditEffectivityModelProvider persons = DirDocEditEffectivityModelProvider.INSTANCE;
-				obj.setFirstName(item);
-				obj.setLastName(instance);
+				obj.setItem(item);
+				obj.setInstantces(instance);
 
 				persons.getPersons().add(obj);
 				viewer.refresh();
 			 }
 
 	 public static boolean checkClone(String identifier, String revision) {
-		 DirDocCreatModelProvider persons = DirDocCreatModelProvider.INSTANCE;
+		 DirDocCreatAttachedDocModelProvider persons = DirDocCreatAttachedDocModelProvider.INSTANCE;
 
 		 boolean result = true;
 		 for (int i=0; i < persons.ModelProviderSize(); i++)
 		 {
 
 				try {
-					String id = TableManager.getColumn(i).getFirstName();
-					String rev = TableManager.getColumn(i).getLastName();
+					String id = TableManager.getColumn(i).getIdentifier();
+					String rev = TableManager.getColumn(i).getRevision();
 
 					if ( id.equals(identifier) && rev.equals(revision) )
 					{
@@ -117,12 +117,12 @@ public class TableManager {
 	 }
 	 public static AttachedDocObject getColumn (int number) throws Exception {
 
-		 DirDocCreatModelProvider persons = DirDocCreatModelProvider.INSTANCE;
-		 
-		 int sizeOfTableArray = DirDocCreatModelProvider.INSTANCE.ModelProviderSize();
+		 DirDocCreatAttachedDocModelProvider persons = DirDocCreatAttachedDocModelProvider.INSTANCE;
+
+		 int sizeOfTableArray = DirDocCreatAttachedDocModelProvider.INSTANCE.ModelProviderSize();
 		 if (number > sizeOfTableArray){
 			 System.out.println("!!!!!getColumn!!!!!!" + "Размер массива данных таьлицы = " + sizeOfTableArray + " Обращение к номеру = " +number);
-			 
+
 		 }
 
 		return	persons.getPersons().get(number);
@@ -131,12 +131,12 @@ public class TableManager {
 
 	 public static EffectivityObject getColumn2 (int number) throws Exception {
 
-		 DirDocCreatModelProvider2 persons = DirDocCreatModelProvider2.INSTANCE;
-		 int sizeOfTableArray = DirDocCreatModelProvider2.INSTANCE.ModelProviderSize();
+		 DirDocCreatEffectivityModelProvider persons = DirDocCreatEffectivityModelProvider.INSTANCE;
+		 int sizeOfTableArray = DirDocCreatEffectivityModelProvider.INSTANCE.ModelProviderSize();
 		 if (number > sizeOfTableArray){
 			 System.out.println("!!!!!getColumn2!!!!!!" + "Размер массива данных таьлицы = " + sizeOfTableArray + " Обращение к номеру = " +number);
-			 
-		 } 
+
+		 }
 
 		return	persons.getPersons().get(number);
 
@@ -145,28 +145,28 @@ public class TableManager {
 	 public static AttachedDocObject getColumn3 (int number) throws Exception {
 
 		 DirDocEditAttachedDocModelProvider persons = DirDocEditAttachedDocModelProvider.INSTANCE;
-		 
+
 		 int sizeOfTableArray = DirDocEditAttachedDocModelProvider.INSTANCE.ModelProviderSize();
 		 if (number > sizeOfTableArray){
 			 System.out.println("!!!!!getColumn3!!!!!!" + "Размер массива данных таьлицы = " + sizeOfTableArray + " Обращение к номеру = " +number);
-			 
-		 } 
+
+		 }
 
 		return	persons.getPersons().get(number);
 
 		 }
-	 
+
 	 public static EffectivityObject getColumn4 (int number) throws Exception {
-		 
-		 
+
+
 
 		 DirDocEditEffectivityModelProvider persons = DirDocEditEffectivityModelProvider.INSTANCE;
-		 
+
 		 int sizeOfTableArray = DirDocEditEffectivityModelProvider.INSTANCE.ModelProviderSize();
 		 if (number > sizeOfTableArray){
 			 System.out.println("!!!!!getColumn4!!!!!!" + "Размер массива данных таьлицы = " + sizeOfTableArray + " Обращение к номеру = " +number);
-			 
-		 } 
+
+		 }
 
 		return	persons.getPersons().get(number);
 

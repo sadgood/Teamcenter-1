@@ -52,20 +52,16 @@ import ru.aerospacesystems.dirdoc.handlers.EffectivityObject;
 import ru.aerospacesystems.dirdoc.handlers.FileManager;
 import ru.aerospacesystems.dirdoc.handlers.GuiManager;
 import ru.aerospacesystems.dirdoc.handlers.AttachedDocObject;
-import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider;
-import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider2;
+import ru.aerospacesystems.dirdoc.handlers.DirDocCreatAttachedDocModelProvider;
+import ru.aerospacesystems.dirdoc.handlers.DirDocCreatEffectivityModelProvider;
 import ru.aerospacesystems.dirdoc.handlers.SwitchButton;
 import ru.aerospacesystems.dirdoc.handlers.TableManager;
 import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.TableForAttachedDocuments;
 import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.TableForEffectivity;
-import ru.aerospacesystems.dirdoc.handlers.tableHandlers.PrimaryOutput.TestTable;
 
 import com.teamcenter.rac.aif.AIFDesktop;
 import com.teamcenter.rac.aif.kernel.InterfaceAIFComponent;
 import com.teamcenter.rac.kernel.TCComponent;
-import com.teamcenter.rac.kernel.TCComponentQuery;
-import com.teamcenter.rac.kernel.TCComponentQueryType;
-import com.teamcenter.rac.kernel.TCException;
 import com.teamcenter.rac.kernel.TCSession;
 
 import org.eclipse.swt.widgets.Combo;
@@ -299,8 +295,8 @@ public class MainWindowSwt extends Shell {
 
 		final TableForAttachedDocuments tableForAttachedDocuments	= new  TableForAttachedDocuments();
 		tableForAttachedDocuments.createPartControl(composite_2);
-		
-		
+
+
 		final TableForEffectivity tableForEffectivity =new  TableForEffectivity();
 		tableForEffectivity.createPartControl(composite_3);
 		try {
@@ -318,31 +314,32 @@ public class MainWindowSwt extends Shell {
 			public void widgetSelected(SelectionEvent e) {
 
 		String[][] selectedForTable = FileManager.getSelectedObject();
-		boolean isCloneExist = false;
+		boolean  isCloneExist = false;
 		try {
 
 
 			for (int i=0; i < selectedForTable.length; i++){
-				 DirDocCreatModelProvider persons = DirDocCreatModelProvider.INSTANCE;
+				 DirDocCreatAttachedDocModelProvider persons = DirDocCreatAttachedDocModelProvider.INSTANCE;
 				 System.out.println("Dlina "+ persons.ModelProviderSize());
 
 
 
 				 for (int i2=0; i2 < persons.ModelProviderSize(); i2++){
-					 String id = TableManager.getColumn(i2).getFirstName();
-					 String rev = TableManager.getColumn(i2).getLastName();
-					 String ID = selectedForTable[i][1];
-					 String REV = selectedForTable[i][2];
+
+					 String id = tableForAttachedDocuments.getColumn(i2).getIdentifier();
+					 String rev = tableForAttachedDocuments.getColumn(i2).getRevision();
+					 String Id = selectedForTable[i][1];
+					 String Rev = selectedForTable[i][2];
 
 
 
 
-					 if (id.equals(ID) & rev.equals(REV)){
+					 if (id.equals(Id) && rev.equals(Rev)){
 						 System.out.println("True");
 							isCloneExist = true;
 						break;
 		}
-					 else if (!id.equals(ID) || !rev.equals(REV))
+					 else if (!id.equals(Id) || !rev.equals(Rev))
 					 {
 						 System.out.println("False");
 						 isCloneExist = false;
@@ -350,7 +347,11 @@ public class MainWindowSwt extends Shell {
 					 }
 
           if ( isCloneExist == false){
-			TableManager.PasteColumn(selectedForTable[i][1],selectedForTable[i][2],"Отсутствует",tableForAttachedDocuments.getViewer());
+        	  TCComponent selectedObject =  FileManager.getDirDocRevision2(tcSession, selectedForTable[i][1], selectedForTable[i][2]);
+        	  String Id = selectedForTable[i][1];
+			  String Rev = selectedForTable[i][2];
+			  String Desc = selectedObject.getStringProperty("object_desc");
+			tableForAttachedDocuments.pasteRow(Id,Desc,Rev,"Отсутствует");
 
           }
 			}
@@ -386,7 +387,7 @@ public class MainWindowSwt extends Shell {
 				 ISelection selection = tableForAttachedDocuments.getViewer().getSelection();
 
 					    if (selection != null && selection instanceof IStructuredSelection) {
-					      List<AttachedDocObject> persons = DirDocCreatModelProvider.INSTANCE.getPersons();
+					      List<AttachedDocObject> persons = DirDocCreatAttachedDocModelProvider.INSTANCE.getPersons();
 					      IStructuredSelection sel = (IStructuredSelection) selection;
 
 					      for (Iterator<AttachedDocObject> iterator = sel.iterator(); iterator.hasNext();) {
@@ -461,7 +462,7 @@ public class MainWindowSwt extends Shell {
 				ISelection selection = tableForEffectivity.getViewer().getSelection();
 
 			    if (selection != null && selection instanceof IStructuredSelection) {
-			      List<EffectivityObject> persons = DirDocCreatModelProvider2.INSTANCE.getPersons();
+			      List<EffectivityObject> persons = DirDocCreatEffectivityModelProvider.INSTANCE.getPersons();
 			      IStructuredSelection sel = (IStructuredSelection) selection;
 
 			      for (Iterator<EffectivityObject> iterator = sel.iterator(); iterator.hasNext();) {
@@ -522,8 +523,8 @@ public class MainWindowSwt extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String dirDocId = dirDocIdTextField.getControl().getText();
-				 DirDocCreatModelProvider persons = DirDocCreatModelProvider.INSTANCE;
-				 DirDocCreatModelProvider2 persons2 = DirDocCreatModelProvider2.INSTANCE;
+				 DirDocCreatAttachedDocModelProvider persons = DirDocCreatAttachedDocModelProvider.INSTANCE;
+				 DirDocCreatEffectivityModelProvider persons2 = DirDocCreatEffectivityModelProvider.INSTANCE;
 				if (rb7.getSelection() != true) {
 					TCComponent dirDocRevision = null;
 
@@ -545,13 +546,13 @@ public class MainWindowSwt extends Shell {
 													dirDocRevision .add("IMAN_specification",FileManager.getDirDocDataset(tcSession, dirDocIdTextField.getControl().getText(), "MSWORD") );
 													GuiManager.infoMessage("Успешное создания директивного документа", "Служебная записка № " + dirDocIdTextField.getControl().getText() + " успешно создана", getShell());
                                                     String effectivityString = new String();
-                                                      
+
                                                     if (persons2.ModelProviderSize() != 0 ){
-                                                    
-                                                    effectivityString =  TableManager.getColumn2(0).getFirstName()+ "#" + TableManager.getColumn2(0).getLastName();
+
+                                                    effectivityString =  TableManager.getColumn2(0).getItem()+ "#" + TableManager.getColumn2(0).getInstantces();
                                                     }
 													for (int i=1; i < persons2.ModelProviderSize(); i++){
-														effectivityString = effectivityString + "/" + TableManager.getColumn2(i).getFirstName()+ "#" + TableManager.getColumn2(i).getLastName();
+														effectivityString = effectivityString + "/" + TableManager.getColumn2(i).getItem()+ "#" + TableManager.getColumn2(i).getInstantces();
 													}
 
 														dirDocRevision.setStringProperty("gov_classification", effectivityString);
@@ -575,7 +576,7 @@ public class MainWindowSwt extends Shell {
 											try {
 											for (int i=0; i < persons.ModelProviderSize(); i++){
 												dirDocRevision = FileManager.getDirDocRevision(tcSession, dirDocIdTextField.getControl().getText());
-													TCComponent otherFileRev =FileManager.getDirDocRevision2(tcSession, TableManager.getColumn(i).getFirstName(), TableManager.getColumn(i).getLastName());
+													TCComponent otherFileRev =FileManager.getDirDocRevision2(tcSession, TableManager.getColumn(i).getIdentifier(), TableManager.getColumn(i).getRevision());
 													otherFileRev.add("AS2_guidingdocuments", dirDocRevision);
 													dirDocRevision.add("AS2_AttachedDoc", otherFileRev);
 

@@ -15,7 +15,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import ru.aerospacesystems.dirdoc.handlers.AttachedDocObject;
-import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider;
+import ru.aerospacesystems.dirdoc.handlers.DirDocCreatAttachedDocModelProvider;
 import ru.aerospacesystems.dirdoc.handlers.EffectivityObject;
 
 

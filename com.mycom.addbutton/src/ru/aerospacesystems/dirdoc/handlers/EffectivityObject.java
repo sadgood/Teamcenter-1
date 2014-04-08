@@ -29,25 +29,25 @@ public class EffectivityObject {
     propertyChangeSupport.removePropertyChangeListener(listener);
   }
 
-  public String getFirstName() {
+  public String getItem() {
     return item;
   }
 
 
-  public String getLastName() {
+  public String getInstantces() {
     return instantces;
   }
 
 
 
-  public void setFirstName(String item) {
+  public void setItem(String item) {
     propertyChangeSupport.firePropertyChange("Идентифкатор", this.item,
         this.item = item);
   }
 
 
 
-  public void setLastName(String instantces) {
+  public void setInstantces(String instantces) {
     propertyChangeSupport.firePropertyChange("Модификация", this.instantces,
         this.instantces = instantces);
   }

@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import ru.aerospacesystems.dirdoc.handlers.AttachedDocObject;
 import ru.aerospacesystems.dirdoc.handlers.DirDocEditAttachedDocModelProvider;
 import ru.aerospacesystems.dirdoc.handlers.EffectivityObject;
-import ru.aerospacesystems.dirdoc.handlers.DirDocCreatModelProvider;
+import ru.aerospacesystems.dirdoc.handlers.DirDocCreatAttachedDocModelProvider;
 import ru.aerospacesystems.dirdoc.handlers.table.MainTableControl;
 
 public class EditTableForAttachedDocuments  {
@@ -64,7 +64,7 @@ public class EditTableForAttachedDocuments  {
 	      @Override
 	      public String getText(Object element) {
 	    	  AttachedDocObject p = (AttachedDocObject) element;
-	        return p.getFirstName();
+	        return p.getIdentifier();
 	      }
 	    });
 
@@ -74,7 +74,7 @@ public class EditTableForAttachedDocuments  {
 	      @Override
 	      public String getText(Object element) {
 	    	  AttachedDocObject p = (AttachedDocObject) element;
-	        return p.getLastName();
+	        return p.getRevision();
 	      }
 	    });
 

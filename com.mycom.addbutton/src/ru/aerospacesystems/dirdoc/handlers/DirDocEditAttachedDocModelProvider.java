@@ -10,8 +10,7 @@ public enum DirDocEditAttachedDocModelProvider {
 
   DirDocEditAttachedDocModelProvider() {
     persons = new ArrayList<AttachedDocObject>();
-    // Image here some fancy database access to read the persons and to
-    // put them into the model
+   
 
   }
 
